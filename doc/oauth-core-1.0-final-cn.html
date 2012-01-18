@@ -1,0 +1,2080 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en"><head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Final: OAuth 核心 1.0</title>
+<meta http-equiv="Expires" content="Wed, 30 Jan 2008 09:40:30 +0000">
+<meta name="description" content="OAuth 核心 1.0">
+<meta name="generator" content="xml2rfc v1.33pre5 (http://xml.resource.org/)">
+<style type='text/css'><!--
+        body {
+                font-family: verdana, charcoal, helvetica, arial, sans-serif;
+                font-size: small; color: #000; background-color: #FFF;
+                margin: 2em;
+        }
+        h1, h2, h3, h4, h5, h6 {
+                font-family: helvetica, monaco, "MS Sans Serif", arial, sans-serif;
+                font-weight: bold; font-style: normal;
+        }
+        h1 { color: #900; background-color: transparent; text-align: right; }
+        h3 { color: #333; background-color: transparent; }
+
+        td.RFCbug {
+                font-size: x-small; text-decoration: none;
+                width: 30px; height: 30px; padding-top: 2px;
+                text-align: justify; vertical-align: middle;
+                background-color: #000;
+        }
+        td.RFCbug span.RFC {
+                font-family: monaco, charcoal, geneva, "MS Sans Serif", helvetica, verdana, sans-serif;
+                font-weight: bold; color: #666;
+        }
+        td.RFCbug span.hotText {
+                font-family: charcoal, monaco, geneva, "MS Sans Serif", helvetica, verdana, sans-serif;
+                font-weight: normal; text-align: center; color: #FFF;
+        }
+
+        table.TOCbug { width: 30px; height: 15px; }
+        td.TOCbug {
+                text-align: center; width: 30px; height: 15px;
+                color: #FFF; background-color: #900;
+        }
+        td.TOCbug a {
+                font-family: monaco, charcoal, geneva, "MS Sans Serif", helvetica, sans-serif;
+                font-weight: bold; font-size: x-small; text-decoration: none;
+                color: #FFF; background-color: transparent;
+        }
+
+        td.header {
+                font-family: arial, helvetica, sans-serif; font-size: x-small;
+                vertical-align: top; width: 33%;
+                color: #FFF; background-color: #666;
+        }
+        td.author { font-weight: bold; font-size: x-small; margin-left: 4em; }
+        td.author-text { font-size: x-small; }
+
+        /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
+        a.info {
+                /* This is the key. */
+                position: relative;
+                z-index: 24;
+                text-decoration: none;
+        }
+        a.info:hover {
+                z-index: 25;
+                color: #FFF; background-color: #900;
+        }
+        a.info span { display: none; }
+        a.info:hover span.info {
+                /* The span will display just on :hover state. */
+                display: block;
+                position: absolute;
+                font-size: smaller;
+                top: 2em; left: -5em; width: 15em;
+                padding: 2px; border: 1px solid #333;
+                color: #900; background-color: #EEE;
+                text-align: left;
+        }
+
+        a { font-weight: bold; }
+        a:link    { color: #900; background-color: transparent; }
+        a:visited { color: #633; background-color: transparent; }
+        a:active  { color: #633; background-color: transparent; }
+
+        p { margin-left: 2em; margin-right: 2em; }
+        p.copyright { font-size: x-small; }
+        p.toc { font-size: small; font-weight: bold; margin-left: 3em; }
+        table.toc { margin: 0 0 0 3em; padding: 0; border: 0; vertical-align: text-top; }
+        td.toc { font-size: small; font-weight: bold; vertical-align: text-top; }
+
+        ol.text { margin-left: 2em; margin-right: 2em; }
+        ul.text { margin-left: 2em; margin-right: 2em; }
+        li      { margin-left: 3em; }
+
+        /* RFC-2629 <spanx>s and <artwork>s. */
+        em     { font-style: italic; }
+        strong { font-weight: bold; }
+        dfn    { font-weight: bold; font-style: normal; }
+        cite   { font-weight: normal; font-style: normal; }
+        tt     { color: #036; }
+        tt, pre, pre dfn, pre em, pre cite, pre span {
+                font-family: "Courier New", Courier, monospace; font-size: small;
+        }
+        pre {
+                text-align: left; padding: 4px;
+                color: #000; background-color: #CCC;
+        }
+        pre dfn  { color: #900; }
+        pre em   { color: #66F; background-color: #FFC; font-weight: normal; }
+        pre .key { color: #33C; font-weight: bold; }
+        pre .id  { color: #900; }
+        pre .str { color: #000; background-color: #CFF; }
+        pre .val { color: #066; }
+        pre .rep { color: #909; }
+        pre .oth { color: #000; background-color: #FCF; }
+        pre .err { background-color: #FCC; }
+
+        /* RFC-2629 <texttable>s. */
+        table.all, table.full, table.headers, table.none {
+                font-size: small; text-align: center; border-width: 2px;
+                vertical-align: top; border-collapse: collapse;
+        }
+        table.all, table.full { border-style: solid; border-color: black; }
+        table.headers, table.none { border-style: none; }
+        th {
+                font-weight: bold; border-color: black;
+                border-width: 2px 2px 3px 2px;
+        }
+        table.all th, table.full th { border-style: solid; }
+        table.headers th { border-style: none none solid none; }
+        table.none th { border-style: none; }
+        table.all td {
+                border-style: solid; border-color: #333;
+                border-width: 1px 2px;
+        }
+        table.full td, table.headers td, table.none td { border-style: none; }
+
+        hr { height: 1px; }
+        hr.insert {
+                width: 80%; border-style: none; border-width: 0;
+                color: #CCC; background-color: #CCC;
+        }
+--></style>
+</head>
+<body>
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<table summary="layout" width="66%" border="0" cellpadding="0" cellspacing="0"><tr><td><table summary="layout" width="100%" border="0" cellpadding="2" cellspacing="1">
+<tr><td class="header">Final</td><td class="header"> OAuth</td></tr>
+<tr><td class="header">&nbsp;</td><td class="header">December 4, 2007</td></tr>
+</table></td></tr></table>
+<h1><br />OAuth 核心 1.0</h1>
+
+<h3>Abstract</h3>
+
+<p>
+        OAuth协议致力于使网站和应用程序（统称为消费方）能够在无须用户透露其认证证书的情况下，通过API访问某个web服务（统称为服务提供方）的受保护资源。更一般地说，OAuth为API认证提供了一个可自由实现且通用的方法。
+
+</p>
+<p>
+        一个典型的例子是某打印服务提供商printer.example.com（消费方），希望在无须用户提供其照片存储站点密码的情况下，访问用户储存在photos.example.net（服务提供方）上的个人照片。
+
+</p>
+<p>
+        OAuth不强求一个特定的用户接口或操作模式，也不限定服务提供方如何验证用户，特别适合认证证书对消费方不可用的情况，例如OpenID。
+
+</p>
+<p>
+        OAuth致力于为托管web服务认证提供统一的体验和实现，形成一个社区驱动的协议。OAuth构建于已被多个站点独立实现的已有协议和最佳化实践之上，是一个被大小服务提供者所支持、并为应用开发者和用户增进持续性和可信度的开放标准。
+
+</p><a name="toc"></a><br /><hr />
+<h3>Table of Contents</h3>
+<p class="toc">
+<a href="#anchor1">1.</a>&nbsp;
+作者<br />
+<a href="#anchor2">2.</a>&nbsp;
+记号与惯例<br />
+<a href="#anchor3">3.</a>&nbsp;
+术语定义<br />
+<a href="#anchor4">4.</a>&nbsp;
+文档与注册<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#request_urls">4.1.</a>&nbsp;
+请求URL<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor5">4.2.</a>&nbsp;
+服务提供方<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor6">4.3.</a>&nbsp;
+消费方<br />
+<a href="#anchor7">5.</a>&nbsp;
+参数<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#encoding_parameters">5.1.</a>&nbsp;
+参数编码<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#consumer_req_param">5.2.</a>&nbsp;
+消费方请求参数<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#response_parameters">5.3.</a>&nbsp;
+服务提供方响应参数<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#auth_header">5.4.</a>&nbsp;
+OAuth HTTP认证方案<br />
+<a href="#anchor9">6.</a>&nbsp;
+使用OAuth认证<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#auth_step1">6.1.</a>&nbsp;
+获取未授权的请求令牌<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#auth_step2">6.2.</a>&nbsp;
+获取用户授权<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#auth_step3">6.3.</a>&nbsp;
+获取访问令牌<br />
+<a href="#anchor13">7.</a>&nbsp;
+访问受保护资源<br />
+<a href="#nonce">8.</a>&nbsp;
+单次值与时间戳<br />
+<a href="#signing_process">9.</a>&nbsp;
+签署请求<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor14">9.1.</a>&nbsp;
+签署基字符串<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor16">9.2.</a>&nbsp;
+HMAC-SHA1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor19">9.3.</a>&nbsp;
+RSA-SHA1<br />
+&nbsp;&nbsp;&nbsp;&nbsp;<a href="#anchor22">9.4.</a>&nbsp;
+PLAINTEXT<br />
+<a href="#http_codes">10.</a>&nbsp;
+HTTP响应代码<br />
+<a href="#anchor25">Appendix&nbsp;A.</a>&nbsp;
+Appendix A - Protocol Example<br />
+<a href="#anchor26">Appendix&nbsp;A.1.</a>&nbsp;
+Documentation and Registration<br />
+<a href="#anchor27">Appendix&nbsp;A.2.</a>&nbsp;
+Obtaining a Request Token<br />
+<a href="#anchor28">Appendix&nbsp;A.3.</a>&nbsp;
+Requesting User Authorization<br />
+<a href="#anchor29">Appendix&nbsp;A.4.</a>&nbsp;
+Obtaining an Access Token<br />
+<a href="#anchor30">Appendix&nbsp;A.5.</a>&nbsp;
+Accessing Protected Resources<br />
+<a href="#anchor33">Appendix&nbsp;B.</a>&nbsp;
+Security Considerations<br />
+<a href="#anchor34">Appendix&nbsp;B.1.</a>&nbsp;
+Credentials and Token Exchange<br />
+<a href="#anchor35">Appendix&nbsp;B.2.</a>&nbsp;
+PLAINTEXT Signature Method<br />
+<a href="#anchor36">Appendix&nbsp;B.3.</a>&nbsp;
+Confidentiality of Requests<br />
+<a href="#anchor37">Appendix&nbsp;B.4.</a>&nbsp;
+Spoofing by Counterfeit Servers<br />
+<a href="#anchor38">Appendix&nbsp;B.5.</a>&nbsp;
+Proxying and Caching of Authenticated Content<br />
+<a href="#anchor39">Appendix&nbsp;B.6.</a>&nbsp;
+Plaintext Storage of Credentials<br />
+<a href="#anchor40">Appendix&nbsp;B.7.</a>&nbsp;
+Secrecy of the Consumer Secret<br />
+<a href="#anchor41">Appendix&nbsp;B.8.</a>&nbsp;
+Phishing Attacks<br />
+<a href="#anchor42">Appendix&nbsp;B.9.</a>&nbsp;
+Scoping of Access Requests<br />
+<a href="#anchor43">Appendix&nbsp;B.10.</a>&nbsp;
+Entropy of Secrets<br />
+<a href="#anchor44">Appendix&nbsp;B.11.</a>&nbsp;
+Denial of Service / Resource Exhaustion Attacks<br />
+<a href="#anchor45">Appendix&nbsp;B.12.</a>&nbsp;
+Cryptographic Attacks<br />
+<a href="#anchor46">Appendix&nbsp;B.13.</a>&nbsp;
+Signature Base String Compatibility<br />
+<a href="#rfc.references1">11.</a>&nbsp;
+References<br />
+<a href="#rfc.authors">&#167;</a>&nbsp;
+Author's Address<br />
+</p>
+<br clear="all" />
+
+<a name="anchor1"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.1"></a><h3>1.&nbsp;
+作者</h3>
+
+<p>
+        </p>
+<blockquote class="text">
+<p>Mark Atwood (me@mark.atwood.name)
+</p>
+<p>Richard M. Conlan (zeveck@google.com)
+</p>
+<p>Blaine Cook (blaine@twitter.com)
+</p>
+<p>Leah Culver (leah@pownce.com)
+</p>
+<p>Kellan Elliott-McCrea (kellan@flickr.com)
+</p>
+<p>Larry Halff (larry@ma.gnolia.com)
+</p>
+<p>Eran Hammer-Lahav (eran@hueniverse.com)
+</p>
+<p>Ben Laurie (benl@google.com)
+</p>
+<p>Chris Messina (chris@citizenagency.com)
+</p>
+<p>John Panzer (jpanzer@acm.org)
+</p>
+<p>Sam Quigley (quigley@emerose.com)
+</p>
+<p>David Recordon (david@sixapart.com)
+</p>
+<p>Eran Sandler (eran@yedda.com)
+</p>
+<p>Jonathan Sergent (sergent@google.com)
+</p>
+<p>Todd Sieling (todd@ma.gnolia.com)
+</p>
+<p>Brian Slesinsky (brian-oauth@slesinsky.org)
+</p>
+<p>Andy Smith (andy@jaiku.com)
+</p>
+</blockquote><p>
+
+</p>
+<a name="anchor2"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.2"></a><h3>2.&nbsp;
+记号与惯例</h3>
+
+<p>
+        本文中的这些关键词“必须”、“不得”、“要求”、“应”、“不应”、“需”、“不可”、“推荐”、“可以”和“可选”在<a class='info' href='#RFC2119'>[RFC2119]<span> (</span><span class='info'>Bradner, B., &ldquo;Key words for use in RFCs to Indicate Requirement Levels,&rdquo; .</span><span>)</span></a>中解释。
+        例子中的域名参考<a class='info' href='#RFC2606'>[RFC2606]<span> (</span><span class='info'>Eastlake, D. and A. Panitz, &ldquo;Reserved Top Level DNS Names,&rdquo; .</span><span>)</span></a>。
+
+</p>
+<a name="anchor3"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.3"></a><h3>3.&nbsp;
+术语定义</h3>
+
+<p>
+        </p>
+<blockquote class="text"><dl>
+<dt>服务提供方 Service Provider:</dt>
+<dd>
+            一个允许通过OAuth访问的web应用程序。
+
+</dd>
+<dt>用户 User:</dt>
+<dd>
+            在服务提供方处拥有帐号的个人。
+
+</dd>
+<dt>消费方 Consumer:</dt>
+<dd>
+            一个代表用户以OAuth形式访问服务提供方的网站或应用程序。
+
+</dd>
+<dt>受保护资源 Protected Resource(s):</dt>
+<dd>
+            服务提供方所掌控的数据，能被通过用户认证的消费方访问。
+
+</dd>
+<dt>消费方开发者 Consumer Developer:</dt>
+<dd>
+            实现消费方的个人或组织。
+
+</dd>
+<dt>消费方键值 Consumer Key:</dt>
+<dd>
+            消费方用来向服务提供方标示身份的值。
+
+</dd>
+<dt>消费方密钥 Consumer Secret:</dt>
+<dd>
+            消费方用于建立对消费方键值所有权的密钥。
+
+</dd>
+<dt>请求令牌 Request Token:</dt>
+<dd>
+            消费方用于从用户处获得授权并换取请求令牌的值。
+
+</dd>
+<dt>访问令牌 Access Token:</dt>
+<dd>
+            消费方用于代表用户在没有密码的情况下访问受保护资源的值。
+
+</dd>
+<dt>令牌密钥 Token Secret:</dt>
+<dd>
+            消费方用于建立对特定令牌所有权的密钥。
+
+</dd>
+<dt>OAuth协议参数 OAuth Protocol Parameters:</dt>
+<dd>
+            参数名称，以<tt>oauth_</tt>开头。
+
+</dd>
+</dl></blockquote><p>
+
+</p>
+<a name="anchor4"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4"></a><h3>4.&nbsp;
+文档与注册</h3>
+
+<p>
+        在OAuth里，服务提供方以一组消费方键值和消费方密钥来鉴定消费方（正如用登录名和密码来鉴定用户）。 这种识别方式使得服务提供方可以向消费方开放不同的访问级别。
+
+</p>
+<p>
+        服务提供方不应依赖消费方密钥来验证消费方的身份，除非能确保消费方密钥不被第三方获知。消费方密钥可以是一个空串，例如消费方无需验证或使用RSA等其他方式验证。
+
+</p>
+<a name="request_urls"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.1"></a><h3>4.1.&nbsp;
+请求URL</h3>
+
+<p>
+          OAuth定义了三种类型的请求URL:
+
+          </p>
+<blockquote class="text"><dl>
+<dt>请求令牌URL:</dt>
+<dd>
+              用于获得一个未授权的请求令牌，详见<a class='info' href='#auth_step1'>Section&nbsp;6.1<span> (</span><span class='info'>获取未授权的请求令牌</span><span>)</span></a>.
+
+</dd>
+<dt>用户授权URL:</dt>
+<dd>
+              用于用户向消费方授权，详见<a class='info' href='#auth_step2'>Section&nbsp;6.2<span> (</span><span class='info'>获取用户授权</span><span>)</span></a>.
+
+</dd>
+<dt>Access Token URL:</dt>
+<dd>
+              用于将已授权的请求令牌换取访问令牌，详见<a class='info' href='#auth_step3'>Section&nbsp;6.3<span> (</span><span class='info'>获取访问令牌</span><span>)</span></a>.
+
+</dd>
+</dl></blockquote><p>
+
+</p>
+<p>
+          三种URL必须包含方案、授权和路径，可以包含<a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., &ldquo;Uniform Resource Identifiers (URI): Generic Syntax,&rdquo; .</span><span>)</span></a>第三部分所定义的查询和片段，不得（MUST NOT）包含任何OAuth协议参数。例如：
+
+          </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+              http://sp.example.com/authorize
+</pre></div><p>
+
+
+</p>
+<a name="anchor5"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.2"></a><h3>4.2.&nbsp;
+服务提供方</h3>
+
+<p>
+          服务提供方负责为消费方开发者创建消费方键值和消费方密钥，所需条件和过程由服务提供方决定。
+
+</p>
+<p>
+          服务提供方文档包括：
+
+          </p>
+<ol class="text">
+<li>
+              消费方所使用的<a class='info' href='#request_urls'>请求URL<span> (</span><span class='info'>请求URL</span><span>)</span></a>、访问请求令牌URL和访问令牌URL所使用的HTTP方法。
+
+</li>
+<li>
+              服务提供方支持的签名方法。
+
+</li>
+<li>
+              获取令牌所需的其他附加请求参数，不得以<tt>oauth_</tt>开头。
+
+</li>
+</ol><p>
+
+</p>
+<a name="anchor6"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.4.3"></a><h3>4.3.&nbsp;
+消费方</h3>
+
+<p>
+          消费方开发者必须在服务提供者处创建一组消费方键值和消费方密钥。注册时开发者可能会被服务提供方要求提供某些附加信息。
+
+</p>
+<a name="anchor7"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5"></a><h3>5.&nbsp;
+参数</h3>
+
+<p>
+        OAuth协议的参数名称和值都是大小写敏感的。每次请求中的参数不得重复出现，除非说明否则都是必须的。
+
+</p>
+<a name="encoding_parameters"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5.1"></a><h3>5.1.&nbsp;
+参数编码</h3>
+
+<p>
+          所有参数名称和值都必须根据<a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., &ldquo;Uniform Resource Identifiers (URI): Generic Syntax,&rdquo; .</span><span>)</span></a>所定义的百分号机制进行转义。
+          保留字符集(<a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., &ldquo;Uniform Resource Identifiers (URI): Generic Syntax,&rdquo; .</span><span>)</span></a> section 2.3)内的不得被编码，其它的必须被编码，编码后的十六进制字符必须大写。
+          百分号转换前的参数名称和值的文本必须是UTF-8编码，见<a class='info' href='#RFC3629'>[RFC3629]<span> (</span><span class='info'>Yergeau, F., &ldquo;UTF-8, a transformation format of Unicode and ISO 10646,&rdquo; .</span><span>)</span></a>。
+
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+            非保留字符 = 字母, 数字, '-', '.', '_', '~'
+</pre></div>
+<a name="consumer_req_param"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5.2"></a><h3>5.2.&nbsp;
+消费方请求参数</h3>
+
+<p>
+          从消费方向服务提供方发送OAuth协议参数使用以下三种形式之一（按优先度降序）：
+          </p>
+<ol class="text">
+<li>
+              <a class='info' href='#auth_header'>OAuth HTTP认证方案<span> (</span><span class='info'>OAuth HTTP认证方案</span><span>)</span></a>中定义的HTTP <tt>Authorization</tt>首部。
+
+</li>
+<li>
+              一个<tt>content-type</tt>为<tt>application/x-www-form-urlencoded</tt>的HTTP POST请求体内。
+
+</li>
+<li>
+              作为URL中的查询部分（定义于<a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., &ldquo;Uniform Resource Identifiers (URI): Generic Syntax,&rdquo; .</span><span>)</span></a>第三部分）。
+
+</li>
+</ol><p>
+
+</p>
+<p>
+          另外，未来的扩展部分可能增加额外的方式以传送OAuth协议参数。发送其他请求参数的方法不被定义，但不应使用<a class='info' href='#auth_header'>OAuth HTTP 认证方案<span> (</span><span class='info'>OAuth HTTP认证方案</span><span>)</span></a>首部.
+
+</p>
+<a name="response_parameters"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5.3"></a><h3>5.3.&nbsp;
+服务提供方响应参数</h3>
+
+<p>
+          服务提供方在HTTP响应体内向消费方返回令牌和其他信息。参数名称和值先按照<a class='info' href='#encoding_parameters'>参数编码<span> (</span><span class='info'>参数编码</span><span>)</span></a>所述进行编码 ，然后按照<a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., &ldquo;Uniform Resource Identifiers (URI): Generic Syntax,&rdquo; .</span><span>)</span></a> Section 2.1 定义的方式用'&amp;'字符(ASCII代码38)连接起来，例如：
+
+</p><div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+            oauth_token=ab3cd9j4ks73hf7g&amp;oauth_token_secret=xyz4992k83j47x0b
+</pre></div>
+<a name="auth_header"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5.4"></a><h3>5.4.&nbsp;
+OAuth HTTP认证方案</h3>
+
+<p>
+          本部分定义了<a class='info' href='#RFC2617'>[RFC2617]<span> (</span><span class='info'>Franks, J., Hallam-Baker, P., Hostetler, J., Lawrence, S., Leach, P., Luotonen, A., and L. Stewart, &ldquo;HTTP Authentication: Basic and Digest Access Authentication,&rdquo; .</span><span>)</span></a>以支持OAuth。使用标准的HTTP <tt>Authorization</tt>和<tt>WWW-Authenticate</tt>首部来传送OAuth协议参数。
+
+</p>
+<p>
+          推荐服务提供方接受HTTP <tt>Authorization</tt>首部，消费方应当能够以<tt>Authorization</tt>首部形式发送OAuth参数。
+
+</p>
+<p>
+          扩展的认证方案(由<a class='info' href='#RFC2617'>[RFC2617]<span> (</span><span class='info'>Franks, J., Hallam-Baker, P., Hostetler, J., Lawrence, S., Leach, P., Luotonen, A., and L. Stewart, &ldquo;HTTP Authentication: Basic and Digest Access Authentication,&rdquo; .</span><span>)</span></a>定义)是大小写不敏感的<tt>OAuth</tt>。
+
+</p>
+<a name="auth_header_authorization"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5.4.1"></a><h3>5.4.1.&nbsp;
+Authorization 首部</h3>
+
+<p>
+            <tt>Authorization</tt>首部中的OAuth协议参数按照以下规则发送：
+
+            </p>
+<ol class="text">
+<li>
+                参数和值按照<a class='info' href='#encoding_parameters'>Parameter Encoding<span> (</span><span class='info'>参数编码</span><span>)</span></a>编码。
+
+</li>
+<li>
+                每个参数名后跟一个'='字符(ASCII代码61)、一个'"'字符(ASCII代码34)、参数值(可以为空)和另一个'"'字符(ASCII代码34)。
+
+</li>
+<li>
+                依照<a class='info' href='#RFC2617'>[RFC2617]<span> (</span><span class='info'>Franks, J., Hallam-Baker, P., Hostetler, J., Lawrence, S., Leach, P., Luotonen, A., and L. Stewart, &ldquo;HTTP Authentication: Basic and Digest Access Authentication,&rdquo; .</span><span>)</span></a>，多个参数以逗号(ASCII代码44)分隔，外加一个可选的换行和空白。
+
+</li>
+<li>
+                可选参数<tt>realm</tt>按照<a class='info' href='#RFC2617'>[RFC2617]<span> (</span><span class='info'>Franks, J., Hallam-Baker, P., Hostetler, J., Lawrence, S., Leach, P., Luotonen, A., and L. Stewart, &ldquo;HTTP Authentication: Basic and Digest Access Authentication,&rdquo; .</span><span>)</span></a>, section 1.2 被添加和解释。
+
+</li>
+</ol><p>
+
+</p>
+<p>
+            例如：
+            </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+                Authorization: OAuth realm="http://sp.example.com/",
+                oauth_consumer_key="0685bd9184jfhq22",
+                oauth_token="ad180jjd733klru7",
+                oauth_signature_method="HMAC-SHA1",
+                oauth_signature="wOJIO9A2W5mFwDgiDvZbTSMK%2FPY%3D",
+                oauth_timestamp="137131200",
+                oauth_nonce="4572616e48616d6d65724c61686176",
+                oauth_version="1.0"
+</pre></div><p>
+
+
+</p>
+<a name="anchor8"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.5.4.2"></a><h3>5.4.2.&nbsp;
+WWW-Authenticate 首部</h3>
+
+<p>
+            消费方请求受保护资源时，服务提供方可以返回OAuth HTTP <tt>WWW-Authenticate</tt>首部表明对OAuth扩展的支持。
+            按照<a class='info' href='#RFC2617'>[RFC2617]<span> (</span><span class='info'>Franks, J., Hallam-Baker, P., Hostetler, J., Lawrence, S., Leach, P., Luotonen, A., and L. Stewart, &ldquo;HTTP Authentication: Basic and Digest Access Authentication,&rdquo; .</span><span>)</span></a> ，回应可以包含附加的<tt>WWW-Authenticate</tt>头：
+
+</p>
+<p>
+            例如：
+            </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+                WWW-Authenticate: OAuth realm="http://sp.example.com/"
+</pre></div><p>
+
+
+</p>
+<p>
+            按照<a class='info' href='#RFC2617'>[RFC2617]<span> (</span><span class='info'>Franks, J., Hallam-Baker, P., Hostetler, J., Lawrence, S., Leach, P., Luotonen, A., and L. Stewart, &ldquo;HTTP Authentication: Basic and Digest Access Authentication,&rdquo; .</span><span>)</span></a>, section 1.2，realm参数定义了受保护区域，
+
+</p>
+<a name="anchor9"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6"></a><h3>6.&nbsp;
+使用OAuth认证</h3>
+
+<p>
+        OAuth认证是指用户在不共享其证书（密码）的前提下授权消费方访问其受保护资源的过程。
+        在请求受保护资源的过程中OAuth使用服务提供方生成的令牌替代了用户的证书。
+        这一过程使用两种类型的令牌：
+
+        </p>
+<blockquote class="text"><dl>
+<dt>请求令牌:</dt>
+<dd>
+            用于消费方向用户请求对访问受保护资源的授权。
+            经过用户授权的请求令牌可以换取一个访问令牌，只能使用一次，不得用于其他用途。
+            建议为请求令牌设置一个有限的生命期。
+
+</dd>
+<dt>访问令牌:</dt>
+<dd>
+            用于消费方代表用户访问受保护资源。
+            访问令牌可以被用于限制访问特定资源，可以只有有限的生命期。
+            服务提供方应当允许用户收回访问令牌。应当只有访问令牌被用于访问受保护资源。
+
+</dd>
+</dl></blockquote><p>
+
+</p>
+<p>
+        OAuth认证由以下三个步骤完成：
+
+        </p>
+<ol class="text">
+<li>
+            消费方获得未授权的请求令牌。
+
+</li>
+<li>
+            用户授权请求令牌。
+
+</li>
+<li>
+            消费方用请求令牌换取访问令牌。
+
+</li>
+</ol><p>
+
+</p>
+<a name="auth_step1"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6.1"></a><h3>6.1.&nbsp;
+获取未授权的请求令牌</h3>
+
+<p>
+          消费方向服务提供方的请求令牌URL发起一个HTTP请求，服务提供方的文档指定了可以使用的HTTP方法，推荐使用POST。
+          请求必须被签署并包含以下参数：
+
+</p>
+<a name="obtain_request_token"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6.1.1"></a><h3>6.1.1.&nbsp;
+消费方获取请求令牌</h3>
+
+<p>
+            消费方向服务提供方的请求令牌URL发起一个HTTP请求，服务提供方的文档指定了可以使用的HTTP方法，推荐使用POST。
+            请求必须被签署并包含以下参数：
+
+            </p>
+<blockquote class="text"><dl>
+<dt>oauth_consumer_key:</dt>
+<dd>
+                消费方键值。
+
+</dd>
+<dt>oauth_signature_method:</dt>
+<dd>
+                消费方签署本请求所用的签名方法。
+
+</dd>
+<dt>oauth_signature:</dt>
+<dd>
+                签名，定义于<a class='info' href='#signing_process'>签署请求<span> (</span><span class='info'>签署请求</span><span>)</span></a>。
+
+</dd>
+<dt>oauth_timestamp:</dt>
+<dd>
+                定义于<a class='info' href='#nonce'>Nonce and Timestamp<span> (</span><span class='info'>单次值与时间戳</span><span>)</span></a>。
+
+</dd>
+<dt>oauth_nonce:</dt>
+<dd>
+                定义于<a class='info' href='#nonce'>Nonce and Timestamp<span> (</span><span class='info'>单次值与时间戳</span><span>)</span></a>。
+
+</dd>
+<dt>oauth_version:</dt>
+<dd>
+                可选。如果存在，其值必须为<tt>1.0</tt>。如果参数不存在，服务提供方必须假定协议版本为<tt>1.0</tt>。
+                服务提供方对<tt>1.0</tt>以外取值的响应尚未定义。
+
+</dd>
+<dt>额外参数:</dt>
+<dd>
+                由服务提供方定义的任意额外参数。
+
+</dd>
+</dl></blockquote><p>
+
+</p>
+<a name="request_grant"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6.1.2"></a><h3>6.1.2.&nbsp;
+服务提供方签发未授权的请求令牌</h3>
+
+<p>
+            服务提供方校验签名和消费方键值。如果成功则生成一个请求令牌和令牌密钥并在HTTP响应体中返回，见<a class='info' href='#response_parameters'>服务提供方响应参数<span> (</span><span class='info'>服务提供方响应参数</span><span>)</span></a>。服务提供方必须确保请求令牌在用户授权成功之前不能被换取访问令牌，见<a class='info' href='#auth_step2'>获取用户授权<span> (</span><span class='info'>获取用户授权</span><span>)</span></a>.
+
+</p>
+<p>
+            响应包含如下参数：
+
+            </p>
+<blockquote class="text"><dl>
+<dt>oauth_token:</dt>
+<dd>
+                请求令牌
+
+</dd>
+<dt>oauth_token_secret:</dt>
+<dd>
+                令牌密钥
+
+</dd>
+<dt>附加参数:</dt>
+<dd>
+                由服务提供方定义的任意参数。
+
+</dd>
+</dl></blockquote><p>
+
+</p>
+<p>
+            如果请求验证失败或由于其他原因被拒绝，服务提供方应当回应以适当的响应代码，见<a class='info' href='#http_codes'>HTTP响应代码<span> (</span><span class='info'>HTTP响应代码</span><span>)</span></a>。服务提供方可以在响应体内包含关于被拒绝原因的详细信息，见<a class='info' href='#response_parameters'>服务提供方相应参数<span> (</span><span class='info'>服务提供方响应参数</span><span>)</span></a>。
+
+</p>
+<a name="auth_step2"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6.2"></a><h3>6.2.&nbsp;
+获取用户授权</h3>
+
+<p>
+           获取用户授权之前，消费方不能使用使用请求令牌。获取用户授权包含以下步骤：
+
+</p>
+<a name="user_auth_redirected"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6.2.1"></a><h3>6.2.1.&nbsp;
+消费方引导用户至服务提供方</h3>
+
+<p>
+            为了能够换取访问令牌，消费方必须引导用户到服务提供方处并获得用户的核准。为此，消费方构造一个指向服务提供方用户授权URL的HTTP GET请求，包含以下参数：
+
+            </p>
+<blockquote class="text"><dl>
+<dt>oauth_token:</dt>
+<dd>
+                 可选。在前述步骤中获得的请求令牌。服务提供方可以声明此参数为必须，也可以允许不包含在授权URL中并提示用户手工输入。
+
+</dd>
+<dt>oauth_callback:</dt>
+<dd>
+                 可选。消费方可以指定一个URL，当
+                <a class='info' href='#auth_step2'>获取用户授权<span> (</span><span class='info'>获取用户授权</span><span>)</span></a>成功后，服务提供方将重定向用户到这个URL。
+
+</dd>
+<dt>附加参数:</dt>
+<dd>
+                由服务提供方定义的任意参数。
+
+</dd>
+</dl></blockquote><p>
+
+</p>
+<p>
+            消费方构造请求URL并通过用户的浏览器将用户重定向到该地址。如果消费方无法自动进行HTTP重定向，则须告知用户如何手工访问该地址。
+
+</p>
+<p>
+            注意：如果服务提供方已知消费方运行于移动设备或机顶盒, 则应保证用户授权URL和请求令牌适于手工输入。
+
+</p>
+<a name="anchor10"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6.2.2"></a><h3>6.2.2.&nbsp;
+服务提供方认证用户并获取许可</h3>
+
+<p>
+
+            服务提供方验证用户身份并询问用户是否许可。OAuth不指定服务提供方如何鉴定用户，但定义了以下必须的步骤：
+
+            </p>
+<ul class="text">
+<li>
+                服务提供方询问用户许可前，必须先验证用户身份，如用户未登录可以要求其先登录。
+
+</li>
+<li>
+                服务提供方向用户展示消费方访问请求相关的信息，包括访问时限、被访问资源等，也可以包含其他 服务提供方指定的信息。
+
+</li>
+<li>
+                用户必须授权或否决服务提供方允许消费方代表用户访问受保护资源。一旦用户否决，服务提供方不得允许消费方访问受保护资源。
+
+</li>
+</ul><p>
+
+</p>
+<p>
+            当服务提供方根据消费方键值显示关于消费方的信息时，必须向用户告知其是否能确保此信息的确实可靠，而所使用的方式不在本规范讨论范围之内。
+
+</p>
+<a name="anchor11"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6.2.3"></a><h3>6.2.3.&nbsp;
+服务提供方将用户引导回消费方</h3>
+
+<p>
+            用户通过服务提供方认证并对消费方授权后，消费方必须被告知请求令牌已被授权并可以交换访问令牌。如果用户否决的访问，则消费方可以被告知请求令牌已被回收。
+
+</p>
+<p>
+            如果消费方在<tt>oauth_callback</tt>中提供了回调URL(在<a class='info' href='#user_auth_redirected'>消费方引导用户至服务提供方<span> (</span><span class='info'>消费方引导用户至服务提供方</span><span>)</span></a>中描述)，则服务提供方构造一个HTTP GET请求URL，重定向用户浏览器到该URL，并包含如下参数：
+
+            </p>
+<blockquote class="text"><dl>
+<dt>oauth_token:</dt>
+<dd>
+                被用户授权或否决的请求令牌
+
+</dd>
+</dl></blockquote><p>
+
+</p>
+<p>
+            回调URL可以包含消费方提供的查询参数，服务提供方必须保持已有查询不变并追加<tt>oauth_token</tt>参数。
+
+</p>
+<p>
+            如果没有提供回调URL则服务提供方告知用户手工通知消费方授权完成。
+
+</p>
+<a name="auth_step3"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6.3"></a><h3>6.3.&nbsp;
+获取访问令牌</h3>
+
+<p>
+          消费方用请求令牌换取访问令牌以访问受保护资源。获取访问令牌包含以下步骤：
+
+</p>
+<a name="anchor12"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6.3.1"></a><h3>6.3.1.&nbsp;
+消费方请求访问令牌</h3>
+
+<p>
+            请求令牌及其密钥必须被交换为访问令牌及其密钥。
+
+</p>
+<p>
+            消费方向服务提供方发起一个HTTP请求以获取访问令牌。服务提供方的文档指定了所使用的HTTP方法，建议使用POST。请求必须按照<a class='info' href='#signing_process'>签署请求<span> (</span><span class='info'>签署请求</span><span>)</span></a>签署， 并包含以下参数：
+
+            </p>
+<blockquote class="text"><dl>
+<dt>oauth_consumer_key:</dt>
+<dd>
+                消费方键值。
+
+</dd>
+<dt>oauth_token:</dt>
+<dd>
+                之前获取的请求令牌。
+
+</dd>
+<dt>oauth_signature_method:</dt>
+<dd>
+                消费方使用的签署方法。
+
+</dd>
+<dt>oauth_signature:</dt>
+<dd>
+                <a class='info' href='#signing_process'>签署请求<span> (</span><span class='info'>签署请求</span><span>)</span></a>中定义的签名。
+
+</dd>
+<dt>oauth_timestamp:</dt>
+<dd>
+                在<a class='info' href='#nonce'>单次值与时间戳<span> (</span><span class='info'>单次值与时间戳</span><span>)</span></a>中定义。
+
+</dd>
+<dt>oauth_nonce:</dt>
+<dd>
+                在<a class='info' href='#nonce'>单次值与时间戳<span> (</span><span class='info'>单次值与时间戳</span><span>)</span></a>中定义。
+
+</dd>
+<dt>oauth_version:</dt>
+<dd>
+                可选。如果存在，其值必须为<tt>1.0</tt>。如果参数不存在，服务提供方必须假定协议版本为<tt>1.0</tt>。
+                服务提供方对<tt>1.0</tt>以外取值的响应尚未定义。
+
+</dd>
+</dl></blockquote><p>
+
+</p>
+<p>
+            请求访问令牌时，不得包含其他服务提供方指定的附加参数，以确保所有令牌相关信息都是之前用户确认时存在的。
+
+</p>
+<a name="access_grant"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.6.3.2"></a><h3>6.3.2.&nbsp;
+服务提供方授予访问令牌</h3>
+
+<p>
+            服务提供方必须确保：
+
+            </p>
+<ul class="text">
+<li>
+                请求签名验证成功。
+
+</li>
+<li>
+                请求令牌从未被交换过访问令牌。
+
+</li>
+<li>
+                请求令牌与消费方键值相符。
+
+</li>
+</ul><p>
+
+</p>
+<p>
+            如果成功，服务提供方生成访问令牌及其密钥，并在HTTP响应体中返回，如<a class='info' href='#response_parameters'>服务提供方响应参数<span> (</span><span class='info'>服务提供方响应参数</span><span>)</span></a>之定义。消费方保存访问令牌及其密钥，并用以签署对受保护资源的请求。响应包含如下参数：
+
+            </p>
+<blockquote class="text"><dl>
+<dt>oauth_token:</dt>
+<dd>
+                访问令牌。
+
+</dd>
+<dt>oauth_token_secret:</dt>
+<dd>
+                令牌密钥。
+
+</dd>
+<dt>附加参数:</dt>
+<dd>
+                服务提供方指定的附加参数。
+
+</dd>
+</dl></blockquote><p>
+
+</p>
+<p>
+            如果请求验证失败或由于其他原因被拒绝，服务提供方应当回应以适当的响应代码，见<a class='info' href='#http_codes'>HTTP响应代码<span> (</span><span class='info'>HTTP响应代码</span><span>)</span></a>。服务提供方可以在响应体内包含关于被拒绝原因的详细信息，见<a class='info' href='#response_parameters'>服务提供方响应参数<span> (</span><span class='info'>服务提供方响应参数</span><span>)</span></a>。
+
+</p>
+<a name="anchor13"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.7"></a><h3>7.&nbsp;
+访问受保护资源</h3>
+
+<p>
+        成功收到访问令牌及其密钥后，消费方即可代表用户访问受保护资源。
+        请求必须按照<a class='info' href='#signing_process'>签署请求<span> (</span><span class='info'>签署请求</span><span>)</span></a>进行签署，并包含如下参数：
+
+        </p>
+<blockquote class="text"><dl>
+<dt>oauth_consumer_key:</dt>
+<dd>
+            消费方键值。
+
+</dd>
+<dt>oauth_token:</dt>
+<dd>
+            访问令牌。
+
+</dd>
+<dt>oauth_signature_method:</dt>
+<dd>
+            消费方使用的签署方法。
+
+</dd>
+<dt>oauth_signature:</dt>
+<dd>
+            <a class='info' href='#signing_process'>签署请求<span> (</span><span class='info'>签署请求</span><span>)</span></a>中定义的签名。
+
+</dd>
+<dt>oauth_timestamp:</dt>
+<dd>
+            定义于<a class='info' href='#nonce'>单次值与时间戳<span> (</span><span class='info'>单次值与时间戳</span><span>)</span></a>.
+
+</dd>
+<dt>oauth_nonce:</dt>
+<dd>
+            定义于<a class='info' href='#nonce'>单次值与时间戳<span> (</span><span class='info'>单次值与时间戳</span><span>)</span></a>.
+
+</dd>
+<dt>oauth_version:</dt>
+<dd>
+            可选。如果存在，其值必须为<tt>1.0</tt>。如果参数不存在，服务提供方必须假定协议版本为<tt>1.0</tt>。
+            服务提供方对<tt>1.0</tt>以外取值的响应尚未定义。
+
+</dd>
+<dt>附加参数:</dt>
+<dd>
+            服务提供方指定的附加参数。
+
+</dd>
+</dl></blockquote><p>
+
+</p>
+<a name="nonce"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.8"></a><h3>8.&nbsp;
+单次值与时间戳</h3>
+
+<p>
+        请求时间戳用格林威治时间1970年1月1日0时0分0秒起的秒数表示，除非服务提供方另外指定。
+        请求时间戳必须是个正整数，并必须不小于上一个请求中的时间戳。
+
+</p>
+<p>
+        消费方必须为一个时间戳的所有请求的生成不同的单次值。
+        单次值是一个随机字符串，是为每次请求生成的唯一值。
+        服务提供方用单次值验证一个请求之前从未被发起过，有助于防止非安全通道（例如HTTP）上的重放攻击。
+
+</p>
+<a name="signing_process"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9"></a><h3>9.&nbsp;
+签署请求</h3>
+
+<p>
+        所有对令牌和受保护资源的请求都必须被消费方签署并由服务提供方验证。
+        对请求进行签署是为了防止未经授权的第三方使用使用消费方键值和令牌请求令牌和受保护资源。
+        签署的过程是将消费方密钥和令牌密钥编码为可校验的值并包含在请求中。
+
+</p>
+<p>
+		OAuth不强制要求特定的签署方法，每个实现可以有其特定的要求。
+		协议定义了三种方法：<tt>HMAC-SHA1</tt>、<tt>RSA-SHA1</tt>和<tt>PLAINTEXT</tt>，服务提供者也可自由实现并在文档中描述其他办法。
+		对特定签署方法的推荐不在本文表述范围之内。
+
+</p>
+<p>
+        消费方在<tt>oauth_signature_method</tt>参数中声明一个签署方法，生成一个签名并存储于<tt>oauth_signature</tt>参数中。
+        服务提供方根据指定的方法验证签名。
+        验证签名时，服务提供方应检查单次值，确保之前的请求中未被使用过。
+
+</p>
+<p>
+        签署过程中，不得改变除<tt>oauth_signature</tt>外的任何参数。
+
+</p>
+<a name="anchor14"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.1"></a><h3>9.1.&nbsp;
+签署基字符串</h3>
+
+<p>
+          签署基字符串（Signature Base String）就是将请求元素串接为单个字符串，该过程的结果是一致的、可重复的。
+          该字符串用于散列或签署算法的输入。
+          <tt>HMAC-SHA1</tt>签署方法提供了签署基字符串用于签署算法的一个标准和实例。
+          生成签署基字符串所有请求参数必须按照<a class='info' href='#encoding_parameters'>参数编码<span> (</span><span class='info'>参数编码</span><span>)</span></a>进行编码。
+
+</p>
+<a name="sig_norm_param"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.1.1"></a><h3>9.1.1.&nbsp;
+正常化请求参数</h3>
+
+<p>
+            请求参数被收集起来，排序并串接为一个普通的字符串：
+            </p>
+<ul class="text">
+<li>
+                除<tt>realm</tt>以外<a class='info' href='#auth_header_authorization'>OAuth HTTP Authorization 首部<span> (</span><span class='info'>Authorization 首部</span><span>)</span></a>中的参数
+
+</li>
+<li>
+                HTTP POST请求体中的参数（<tt>content-type</tt>为<tt>application/x-www-form-urlencoded</tt>）。
+
+</li>
+<li>
+                HTTP GET URL中的查询部分参数(定义于
+                <a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., &ldquo;Uniform Resource Identifiers (URI): Generic Syntax,&rdquo; .</span><span>)</span></a> section 3).
+
+</li>
+</ul><p>
+
+</p>
+<p>
+            <tt>oauth_signature</tt>参数必须被排除。
+
+</p>
+<p>
+            参数按照以下方式正常化为一个字符串：
+            </p>
+<ol class="text">
+<li>
+                按照参数名字典顺序排序。同名参数按其值排序，例如：
+
+                <div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+                    a=1, c=hi%20there, f=25, f=50, f=a, z=p, z=t
+</pre></div>
+
+</li>
+<li>
+                已排序参数串接为一个字符串。
+                每个参数名后跟一个“=”字符（ASCII代码61），无论参数值是否为空。
+                每对参数之间用“&amp;”字符（ASCII代码38）分开。例如：
+                <div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+                    a=1&amp;c=hi%20there&amp;f=25&amp;f=50&amp;f=a&amp;z=p&amp;z=t
+</pre></div>
+
+</li>
+</ol><p>
+
+</p>
+<a name="sig_url"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.1.2"></a><h3>9.1.2.&nbsp;
+构造请求URL</h3>
+
+<p>
+            签署基字符串包含了请求的绝对URL，以确保签名和特定终点的捆绑。
+            签署基字符串中的URL必须包含方案、授权和路径，必须排除<a class='info' href='#RFC3986'>[RFC3986]<span> (</span><span class='info'>Berners-Lee, T., &ldquo;Uniform Resource Identifiers (URI): Generic Syntax,&rdquo; .</span><span>)</span></a> section 3所定义的查询和片段部分。
+
+</p>
+<p>
+            如果绝对地址对服务提供方不可用（对消费方总是可用的），则根据当前使用的方案、HTTP <tt>Host</tt>
+            首部、相对请求URL组合而成。
+            如果<tt>Host</tt>首部不可用，则服务提供方应使用文档中或其他方式下对消费方通讯使用的主机名。
+
+</p>
+<p>
+            服务提供方应当在文档中说明签署基字符串中所使用URL的形式，以避免URL正常化过程中混淆。
+            除非特别指定，URL方案和认证都必须小写，并包含端口号；HTTP默认端口80和HTTPS默认端口443必须被排除。
+
+</p>
+<p>
+            例如，如下请求：
+
+            </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+                HTTP://Example.com:80/resource?id=123
+</pre></div><p>
+
+
+            在签署基字符串中被包含为如下：
+            </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+                http://example.com/resource
+</pre></div><p>
+
+
+</p>
+<a name="anchor15"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.1.3"></a><h3>9.1.3.&nbsp;
+串接请求字符串</h3>
+
+<p>
+            以下项必须被依次串接成为一个字符串。
+            每一项都按照<a class='info' href='#encoding_parameters'>编码参数<span> (</span><span class='info'>参数编码</span><span>)</span></a>进行编码，无论是否为空都用“&amp;”字符（ASCII代码38）分开。
+
+            </p>
+<ol class="text">
+<li>
+                发送请求所使用的HTTP方法，必须大写，例如：
+                <tt>HEAD</tt>、<tt>GET</tt>、<tt>POST</tt>等。
+
+</li>
+<li>
+                前述<a class='info' href='#sig_url'>构造请求URL<span> (</span><span class='info'>构造请求URL</span><span>)</span></a>.
+
+</li>
+<li>
+                前述<a class='info' href='#sig_norm_param'>请求参数正常化<span> (</span><span class='info'>正常化请求参数</span><span>)</span></a>得到的字符。
+
+</li>
+</ol><p>
+
+</p>
+<p>
+            参考<a class='info' href='#sig_base_example'>Appendix&nbsp;A.5.1<span> (</span><span class='info'>Generating Signature Base String</span><span>)</span></a>中的范例。
+
+</p>
+<a name="anchor16"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.2"></a><h3>9.2.&nbsp;
+HMAC-SHA1</h3>
+
+<p>
+          <tt>HMAC-SHA1</tt>签署方式使用<a class='info' href='#RFC2104'>[RFC2104]<span> (</span><span class='info'>Krawczyk, H., Bellare, M., and R. Canetti, &ldquo;HMAC: Keyed-Hashing for Message Authentication,&rdquo; .</span><span>)</span></a>中定义的HMAC-SHA1签署算法，把签署基字符串作为<tt>text</tt>，
+          <tt>key</tt>则由先按照<a class='info' href='#encoding_parameters'>参数编码<span> (</span><span class='info'>参数编码</span><span>)</span></a>进行编码再用“&amp;”字符（ASCII代码38）分隔（无论是否为空）的消费方密钥和令牌密钥串接而成。
+
+</p>
+<a name="anchor17"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.2.1"></a><h3>9.2.1.&nbsp;
+生成签名</h3>
+
+<p>
+            <tt>oauth_signature</tt>被设置为<tt>digest</tt>字节串，
+            先按照<a class='info' href='#RFC2045'>[RFC2045]<span> (</span><span class='info'>Freed, N. and N. Borenstein, &ldquo;Multipurpose Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies,&rdquo; .</span><span>)</span></a> section 6.8 base64编码, 再按照<a class='info' href='#encoding_parameters'>参数编码<span> (</span><span class='info'>参数编码</span><span>)</span></a>进行URL编码。
+
+</p>
+<a name="anchor18"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.2.2"></a><h3>9.2.2.&nbsp;
+验证签名</h3>
+
+<p>
+            服务提供方使用如下步骤验证请求：
+            首先生成一个新的请求签名，将消费方提供的签名先按照<a class='info' href='#encoding_parameters'>Parameter Encoding<span> (</span><span class='info'>参数编码</span><span>)</span></a>进行请求解码，
+            再按照 <a class='info' href='#RFC2045'>[RFC2045]<span> (</span><span class='info'>Freed, N. and N. Borenstein, &ldquo;Multipurpose Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies,&rdquo; .</span><span>)</span></a> section 6.8 进行base64解码，然后将两者进行比较。
+            服务提供方用于生成签名的是消费方的请求参数及本地存储的消费方密钥和令牌密钥。
+
+</p>
+<a name="anchor19"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.3"></a><h3>9.3.&nbsp;
+RSA-SHA1</h3>
+
+<p>
+          <tt>RSA-SHA1</tt>签署方式使用<a class='info' href='#RFC3447'>[RFC3447]<span> (</span><span class='info'>Jonsson, J. and B. Kaliski, &ldquo;Public-Key Cryptography Standards (PKCS) #1: RSA Cryptography; Specifications Version 2.1,&rdquo; .</span><span>)</span></a> section 8.2 (通常被称为 PKCS#1)中定义的RSASSA-PKCS1-v1_5签署算法，使用SHA-1作为EMSA-PKCS1-v1_5的散列算法。假定消费方已通过某种可验证的途径（不在本规范讨论范围之内）向服务提供方提供了RSA公钥。
+
+</p>
+<a name="anchor20"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.3.1"></a><h3>9.3.1.&nbsp;
+生成签名</h3>
+
+<p>
+            签署基字符串按照<a class='info' href='#RFC3447'>[RFC3447]<span> (</span><span class='info'>Jonsson, J. and B. Kaliski, &ldquo;Public-Key Cryptography Standards (PKCS) #1: RSA Cryptography; Specifications Version 2.1,&rdquo; .</span><span>)</span></a> section 8.2.1 使用消费方的RSA私钥进行签署，
+            <tt>K</tt> 为消费方的RSA私钥，<tt>M</tt>为签署基字符串，<tt>S</tt>为签署结果字节串：
+
+            </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+                S = RSASSA-PKCS1-V1_5-SIGN (K, M)
+</pre></div><p>
+
+
+</p>
+<p>
+            <tt>oauth_signature</tt>被设置为<tt>S</tt>，先按照
+            <a class='info' href='#RFC2045'>[RFC2045]<span> (</span><span class='info'>Freed, N. and N. Borenstein, &ldquo;Multipurpose Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies,&rdquo; .</span><span>)</span></a> section 6.8 进行base64编码，然后按照
+            <a class='info' href='#encoding_parameters'>Parameter Encoding<span> (</span><span class='info'>参数编码</span><span>)</span></a>进行URL编码。
+
+</p>
+<a name="anchor21"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.3.2"></a><h3>9.3.2.&nbsp;
+验证签名</h3>
+
+<p>
+            服务提供方按照<a class='info' href='#RFC3447'>[RFC3447]<span> (</span><span class='info'>Jonsson, J. and B. Kaliski, &ldquo;Public-Key Cryptography Standards (PKCS) #1: RSA Cryptography; Specifications Version 2.1,&rdquo; .</span><span>)</span></a>section 8.2.2 验证签名，
+            其中<tt>(n, e)</tt> 为消费方RSA公钥，
+            <tt>M</tt>为签署基字符串，
+            <tt>S</tt>为<tt>oauth_signature</tt>代表的字节值：
+
+            </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+                RSASSA-PKCS1-V1_5-VERIFY ((n, e), M, S)
+</pre></div><p>
+
+
+</p>
+<a name="anchor22"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.4"></a><h3>9.4.&nbsp;
+PLAINTEXT</h3>
+
+<p>
+          纯文本（<tt>PLAINTEXT</tt>）方式不提供任何安全保护，应当仅被用于安全通道如HTTPS之上。该方式不使用签署基字符串。
+
+</p>
+<a name="anchor23"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.4.1"></a><h3>9.4.1.&nbsp;
+生成签名</h3>
+
+<p>
+            <tt>oauth_signature</tt>被设置为编码后的消费方密钥和令牌密钥的串接值，用'&amp;'字符(ASCII代码38)分隔，无论密钥是否为空。
+            结果必须被再次编码。
+
+</p>
+<p>
+            以下例子给出了在消费方密钥为<tt>djr9rjt0jd78jf88</tt>，
+            而令牌密钥分别为三个不同的值时得到的<tt>oauth_signature</tt>值：
+
+            </p>
+<blockquote class="text"><dl>
+<dt>jjd999tj88uiths3:</dt>
+<dd>
+                <tt>oauth_signature</tt>=<tt>djr9rjt0jd78jf88%26jjd999tj88uiths3</tt>
+
+</dd>
+<dt>jjd99$tj88uiths3:</dt>
+<dd>
+                <tt>oauth_signature</tt>=<tt>djr9rjt0jd78jf88%26jjd99%2524tj88uiths3</tt>
+
+</dd>
+<dt>空:</dt>
+<dd>
+                <tt>oauth_signature</tt>=<tt>djr9rjt0jd78jf88%26</tt>
+
+</dd>
+</dl></blockquote><p>
+
+</p>
+<a name="anchor24"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.9.4.2"></a><h3>9.4.2.&nbsp;
+验证签名</h3>
+
+<p>
+            服务提供方将签名拆分出消费方密钥和令牌密钥，分别与本地存储的值进行比较验证。
+
+</p>
+<a name="http_codes"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.10"></a><h3>10.&nbsp;
+HTTP响应代码</h3>
+
+<p>
+        本部分仅适用于对请求令牌和访问令牌的请求。一般地说，服务提供方应当使用<a class='info' href='#RFC2616'>[RFC2616]<span> (</span><span class='info'>Fielding, R., Gettys, J., Mogul, J., Frystyk, H., Masinter, L., Leach, P., and T. Berners-Lee, &ldquo;Hypertext Transfer Protocol -- HTTP/1.1,&rdquo; .</span><span>)</span></a> Section 10中定义的响应代码。
+        当服务提供方拒绝一个消费方的请求时，应当返回HTTP 400 Bad Request 或HTTP 401 Unauthorized。
+
+        </p>
+<ul class="text">
+<li>
+            HTTP 400 Bad Request
+
+<ul class="text">
+<li>
+                Unsupported parameter
+
+</li>
+<li>
+                Unsupported signature method
+
+</li>
+<li>
+                Missing required parameter
+
+</li>
+<li>
+                Duplicated OAuth Protocol Parameter
+
+</li>
+</ul>
+
+</li>
+<li>
+            HTTP 401 Unauthorized
+
+<ul class="text">
+<li>
+                Invalid Consumer Key
+
+</li>
+<li>
+                Invalid / expired Token
+
+</li>
+<li>
+                Invalid signature
+
+</li>
+<li>
+                Invalid / used nonce
+
+</li>
+</ul>
+
+</li>
+</ul><p>
+
+</p>
+<a name="anchor25"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.A"></a><h3>Appendix A.&nbsp;
+Appendix A - Protocol Example</h3>
+
+<p>
+        In this example, the Service Provider photos.example.net is a photo
+        sharing website, and the Consumer printer.example.com is a photo
+        printing website. Jane, the User, would like printer.example.com to
+        print the private photo <tt>
+          vacation.jpg
+        </tt> stored at photos.example.net.
+
+</p>
+<p>
+        When Jane signs-into photos.example.net using her username and
+        password, she can access the photo by going to the URL
+        <tt>http://photos.example.net/photo?file=vacation.jpg</tt>. Other Users
+        cannot access that photo, and Jane does not want to share her
+        username and password with printer.example.com.
+
+</p>
+<p>
+        The requests in this example use the URL query method when sending
+        parameters. This is done to simplify the example and should not be
+        taken as an endorsement of one method over the others.
+
+</p>
+<a name="anchor26"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.A.1"></a><h3>Appendix A.1.&nbsp;
+Documentation and Registration</h3>
+
+<p>
+          The Service Provider documentation explains how to register for a
+          Consumer Key and Consumer Secret, and declares the following URLs:
+
+          </p>
+<blockquote class="text"><dl>
+<dt>Request Token URL:</dt>
+<dd>
+              https://photos.example.net/request_token, using HTTP POST
+
+</dd>
+<dt>User Authorization URL:</dt>
+<dd>
+              http://photos.example.net/authorize, using HTTP GET
+
+</dd>
+<dt>Access Token URL:</dt>
+<dd>
+              https://photos.example.net/access_token, using HTTP POST
+
+</dd>
+<dt>Photo (Protected Resource) URL:</dt>
+<dd>
+              http://photos.example.net/photo with required parameter
+              <tt>file</tt> and optional parameter <tt>size</tt>
+
+</dd>
+</dl></blockquote><p>
+
+</p>
+<p>
+          The Service Provider declares support for the <tt>
+            HMAC-SHA1
+          </tt> signature
+          method for all requests, and <tt>PLAINTEXT</tt> only for secure (HTTPS)
+          requests.
+
+</p>
+<p>
+          The Consumer printer.example.com already established a Consumer Key
+          and Consumer Secret with photos.example.net and advertizes its
+          printing services for photos stored on photos.example.net. The
+          Consumer registration is:
+
+          </p>
+<blockquote class="text"><dl>
+<dt>Consumer Key:</dt>
+<dd>
+              <tt>
+                dpf43f3p2l4k3l03
+              </tt>
+
+</dd>
+<dt>Consumer Secret:</dt>
+<dd>
+              <tt>kd94hf93k423kf44</tt>
+
+</dd>
+</dl></blockquote><p>
+
+</p>
+<a name="anchor27"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.A.2"></a><h3>Appendix A.2.&nbsp;
+Obtaining a Request Token</h3>
+
+<p>
+          After Jane informs printer.example.com that she would like to print
+          her vacation photo stored at photos.example.net, the printer website
+          tries to access the photo and receives HTTP 401 Unauthorized
+          indicating it is private. The Service Provider includes the following
+          header with the response:
+
+          </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+              WWW-Authenticate: OAuth realm="http://photos.example.net/"
+</pre></div><p>
+
+
+</p>
+<p>
+          The Consumer sends the following HTTP POST request to the Service
+          Provider:
+
+          </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+              https://photos.example.net/request_token?oauth_consumer_key=dpf43f3p2l4k3l03&amp;oauth_signature_method=PLAINTEXT&amp;oauth_signature=kd94hf93k423kf44%26&amp;oauth_timestamp=1191242090&amp;oauth_nonce=hsu94j3884jdopsl&amp;oauth_version=1.0
+</pre></div><p>
+
+
+</p>
+<p>
+          The Service Provider checks the signature and replies with an
+          unauthorized Request Token in the body of the HTTP response:
+
+          </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+              oauth_token=hh5s93j4hdidpola&amp;oauth_token_secret=hdhd0244k9j7ao03
+</pre></div><p>
+
+
+</p>
+<a name="anchor28"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.A.3"></a><h3>Appendix A.3.&nbsp;
+Requesting User Authorization</h3>
+
+<p>
+          The Consumer redirects Jane's browser to the Service Provider
+          User Authorization URL to obtain Jane's approval for accessing
+          her private photos.
+
+          </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+              http://photos.example.net/authorize?oauth_token=hh5s93j4hdidpola&amp;oauth_callback=http%3A%2F%2Fprinter.example.com%2Frequest_token_ready
+</pre></div><p>
+
+
+</p>
+<p>
+          The Service Provider asks Jane to sign-in using her username and
+          password and, if successful, asks her if she approves granting
+          printer.example.com access to her private photos. If Jane approves
+          the request, the Service Provider redirects her back to the
+          Consumer's callback URL:
+
+          </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+              http://printer.example.com/request_token_ready?oauth_token=hh5s93j4hdidpola
+</pre></div><p>
+
+
+</p>
+<a name="anchor29"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.A.4"></a><h3>Appendix A.4.&nbsp;
+Obtaining an Access Token</h3>
+
+<p>
+          Now that the Consumer knows Jane approved the Request Token, it
+          asks the Service Provider to exchange it for an Access Token:
+
+          </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+              https://photos.example.net/access_token?oauth_consumer_key=dpf43f3p2l4k3l03&amp;oauth_token=hh5s93j4hdidpola&amp;oauth_signature_method=PLAINTEXT&amp;oauth_signature=kd94hf93k423kf44%26hdhd0244k9j7ao03&amp;oauth_timestamp=1191242092&amp;oauth_nonce=dji430splmx33448&amp;oauth_version=1.0
+</pre></div><p>
+
+
+</p>
+<p>
+          The Service Provider checks the signature and replies with an
+          Access Token in the body of the HTTP response:
+
+          </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+              oauth_token=nnch734d00sl2jdk&amp;oauth_token_secret=pfkkdhi9sl3r4s00
+</pre></div><p>
+
+
+</p>
+<a name="anchor30"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.A.5"></a><h3>Appendix A.5.&nbsp;
+Accessing Protected Resources</h3>
+
+<p>
+          The Consumer is now ready to request the private photo. Since the
+          photo URL is not secure (HTTP), it must use <tt>HMAC-SHA1</tt>.
+
+</p>
+<a name="sig_base_example"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.A.5.1"></a><h3>Appendix A.5.1.&nbsp;
+Generating Signature Base String</h3>
+
+<p>
+            To generate the signature, it first needs to generate the Signature
+            Base String. The request contains the following parameters
+            (<tt>oauth_signature</tt> excluded) which are ordered and concatenated into
+            a normalized string:
+
+            </p>
+<blockquote class="text"><dl>
+<dt>oauth_consumer_key:</dt>
+<dd>
+                <tt>dpf43f3p2l4k3l03</tt>
+
+</dd>
+<dt>oauth_token:</dt>
+<dd>
+                <tt>nnch734d00sl2jdk</tt>
+
+</dd>
+<dt>oauth_signature_method:</dt>
+<dd>
+                <tt>HMAC-SHA1</tt>
+
+</dd>
+<dt>oauth_timestamp:</dt>
+<dd>
+                <tt>1191242096</tt>
+
+</dd>
+<dt>oauth_nonce:</dt>
+<dd>
+                <tt>kllo9940pd9333jh</tt>
+
+</dd>
+<dt>oauth_version:</dt>
+<dd>
+                <tt>1.0</tt>
+
+</dd>
+<dt>file:</dt>
+<dd>
+                <tt>vacation.jpg</tt>
+
+</dd>
+<dt>size:</dt>
+<dd>
+                <tt>original</tt>
+
+</dd>
+</dl></blockquote><p>
+
+</p>
+<p>
+            The following inputs are used to generate the Signature Base String:
+
+            </p>
+<ol class="text">
+<li>
+                <tt>GET</tt>
+
+</li>
+<li>
+                <tt>http://photos.example.net/photos</tt>
+
+</li>
+<li>
+                <tt>file=vacation.jpg&amp;oauth_consumer_key=dpf43f3p2l4k3l03&amp;oauth_nonce=kllo9940pd9333jh&amp;oauth_signature_method=HMAC-SHA1&amp;oauth_timestamp=1191242096&amp;oauth_token=nnch734d00sl2jdk&amp;oauth_version=1.0&amp;size=original</tt>
+
+</li>
+</ol><p>
+
+</p>
+<p>
+            The Signature Base String is:
+
+            </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+                GET&amp;http%3A%2F%2Fphotos.example.net%2Fphotos&amp;file%3Dvacation.jpg%26oauth_consumer_key%3Ddpf43f3p2l4k3l03%26oauth_nonce%3Dkllo9940pd9333jh%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1191242096%26oauth_token%3Dnnch734d00sl2jdk%26oauth_version%3D1.0%26size%3Doriginal
+</pre></div><p>
+
+
+</p>
+<a name="anchor31"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.A.5.2"></a><h3>Appendix A.5.2.&nbsp;
+Calculating Signature Value</h3>
+
+<p>
+            HMAC-SHA1 produces the following <tt>digest</tt> value as a base64-encoded
+            string (using the Signature Base String as <tt>text</tt> and
+            <tt>
+              kd94hf93k423kf44&amp;pfkkdhi9sl3r4s00
+            </tt> as <tt>key</tt>):
+
+            </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+                tR3+Ty81lMeYAr/Fid0kMTYa/WM=
+</pre></div><p>
+
+
+</p>
+<a name="anchor32"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.A.5.3"></a><h3>Appendix A.5.3.&nbsp;
+Requesting Protected Resource</h3>
+
+<p>
+            All together, the Consumer request for the photo is:
+
+            </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+                http://photos.example.net/photos?file=vacation.jpg&amp;size=original
+
+                Authorization: OAuth realm="http://photos.example.net/",
+                oauth_consumer_key="dpf43f3p2l4k3l03",
+                oauth_token="nnch734d00sl2jdk",
+                oauth_signature_method="HMAC-SHA1",
+                oauth_signature="tR3%2BTy81lMeYAr%2FFid0kMTYa%2FWM%3D",
+                oauth_timestamp="1191242096",
+                oauth_nonce="kllo9940pd9333jh",
+                oauth_version="1.0"
+</pre></div><p>
+
+
+</p>
+<p>
+            And if using query parameters:
+
+            </p>
+<div style='display: table; width: 0; margin-left: 3em; margin-right: auto'><pre>
+                http://photos.example.net/photos?file=vacation.jpg&amp;size=original&amp;oauth_consumer_key=dpf43f3p2l4k3l03&amp;oauth_token=nnch734d00sl2jdk&amp;oauth_signature_method=HMAC-SHA1&amp;oauth_signature=tR3%2BTy81lMeYAr%2FFid0kMTYa%2FWM%3D&amp;oauth_timestamp=1191242096&amp;oauth_nonce=kllo9940pd9333jh&amp;oauth_version=1.0
+</pre></div><p>
+
+
+</p>
+<p>
+            photos.example.net checks the signature and responds with the
+            requested photo.
+
+</p>
+<a name="anchor33"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B"></a><h3>Appendix B.&nbsp;
+Security Considerations</h3>
+
+<a name="anchor34"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B.1"></a><h3>Appendix B.1.&nbsp;
+Credentials and Token Exchange</h3>
+
+<p>
+          The OAuth specification does not describe any mechanism for protecting
+          Tokens and secrets from eavesdroppers when they are transmitted from
+          the Service Provider to the Consumer in <a class='info' href='#request_grant'>Section&nbsp;6.1.2<span> (</span><span class='info'>服务提供方签发未授权的请求令牌</span><span>)</span></a>
+          and  <a class='info' href='#access_grant'>Section&nbsp;6.3.2<span> (</span><span class='info'>服务提供方授予访问令牌</span><span>)</span></a>. Service Providers should ensure
+          that these transmissions are protected using transport-layer mechanisms
+          such as TLS or SSL.
+
+</p>
+<a name="anchor35"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B.2"></a><h3>Appendix B.2.&nbsp;
+PLAINTEXT Signature Method</h3>
+
+<p>
+          When used with <tt>PLAINTEXT</tt> signatures, the
+          OAuth protocol makes no attempts to protect User credentials from
+          eavesdroppers or man-in-the-middle attacks.
+          The <tt>PLAINTEXT</tt> signature algorithm is only
+          intended to be used in conjunction with a transport-layer security
+          mechanism such as TLS or SSL which does provide such protection.
+          If transport-layer protection is unavailable, the
+          <tt>PLAINTEXT</tt> signature method should not be
+          used.
+
+</p>
+<a name="anchor36"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B.3"></a><h3>Appendix B.3.&nbsp;
+Confidentiality of Requests</h3>
+
+<p>
+          While OAuth provides a mechanism for verifying the integrity of
+          requests, it provides no guarantee of request confidentiality.
+          Unless further precautions are taken, eavesdroppers will have full
+          access to request content. Service Providers should carefully
+          consider the kinds of data likely to be sent as part of such requests,
+          and should employ transport-layer security mechanisms to protect
+          sensitive resources.
+
+</p>
+<a name="anchor37"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B.4"></a><h3>Appendix B.4.&nbsp;
+Spoofing by Counterfeit Servers</h3>
+
+<p>
+          OAuth makes no attempt to verify the authenticity of the Service
+          Provider. A hostile party could take advantage of this by intercepting
+          the Consumer's requests and returning misleading or otherwise incorrect
+          responses. Service providers should consider such attacks when
+          developing services based on OAuth, and should require transport-layer
+          security for any requests where the authenticity of the Service
+          Provider or of request responses is an issue.
+
+</p>
+<a name="anchor38"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B.5"></a><h3>Appendix B.5.&nbsp;
+Proxying and Caching of Authenticated Content</h3>
+
+<p>
+          The <a class='info' href='#auth_header'>HTTP Authorization scheme<span> (</span><span class='info'>OAuth HTTP认证方案</span><span>)</span></a> is
+          optional. However, <a class='info' href='#RFC2616'>[RFC2616]<span> (</span><span class='info'>Fielding, R., Gettys, J., Mogul, J., Frystyk, H., Masinter, L., Leach, P., and T. Berners-Lee, &ldquo;Hypertext Transfer Protocol -- HTTP/1.1,&rdquo; .</span><span>)</span></a> relies on the
+          <tt>Authorization</tt> and
+          <tt>WWW-Authenticate</tt> headers to distinguish
+          authenticated content so that it can be protected. Proxies and
+          caches, in particular, may fail to adequately protect requests not
+          using these headers.
+
+</p>
+<p>
+          For example, private authenticated content may be stored in (and thus
+          retrievable from) publicly-accessible caches. Service Providers not
+          using the <a class='info' href='#auth_header'>HTTP Authorization scheme<span> (</span><span class='info'>OAuth HTTP认证方案</span><span>)</span></a>
+          should take care to use other mechanisms, such as the
+          <tt>Cache-Control</tt> header, to ensure that
+          authenticated content is protected.
+
+</p>
+<a name="anchor39"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B.6"></a><h3>Appendix B.6.&nbsp;
+Plaintext Storage of Credentials</h3>
+
+<p>
+          The Consumer Secret and Token Secret function the same way passwords
+          do in traditional authentication systems. In order to compute the
+          signatures used in the non-<tt>PLAINTEXT</tt>
+          methods, the Service Provider must have access to these secrets in
+          plaintext form. This is in contrast, for example, to modern operating
+          systems, which store only a one-way hash of user credentials.
+
+</p>
+<p>
+          If an attacker were to gain access to these secrets - or worse, to
+          the Service Provider's database of all such secrets - he or she would
+          be able to perform any action on behalf of any User. Accordingly, it
+          is critical that Service Providers protect these secrets from
+          unauthorized access.
+
+</p>
+<a name="anchor40"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B.7"></a><h3>Appendix B.7.&nbsp;
+Secrecy of the Consumer Secret</h3>
+
+<p>
+          In many applications, the Consumer application will be under the
+          control of potentially untrusted parties. For example, if the
+          Consumer is a freely available desktop application, an attacker may
+          be able to download a copy for analysis. In such cases, attackers
+          will be able to recover the Consumer Secret used to authenticate the
+          Consumer to the Service Provider.
+
+</p>
+<p>
+          Accordingly, Service Providers should not use the Consumer Secret
+          alone to verify the identity of the Consumer. Where possible, other
+          factors such as IP address should be used as well.
+
+</p>
+<a name="anchor41"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B.8"></a><h3>Appendix B.8.&nbsp;
+Phishing Attacks</h3>
+
+<p>
+          Wide deployment of OAuth and similar protocols may cause
+          Users to become inured to the practice of being redirected to
+          websites where they are asked to enter their passwords. If Users are
+          not careful to verify the authenticity of these websites before
+          entering their credentials, it will be possible for attackers to
+          exploit this practice to steal Users' passwords.
+
+</p>
+<p>
+          Service Providers should attempt to educate Users about the risks
+          phishing attacks pose, and should provide mechanisms that make it
+          easy for Users to confirm the authenticity of their sites.
+
+</p>
+<a name="anchor42"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B.9"></a><h3>Appendix B.9.&nbsp;
+Scoping of Access Requests</h3>
+
+<p>
+          By itself, OAuth does not provide any method for scoping the access
+          rights granted to a Consumer. A Consumer either has access to
+          Protected Resources or it doesn't. Many applications will, however,
+          require greater granularity of access rights. For example, Service
+          Providers may wish to make it possible to grant access to some
+          Protected Resources but not others, or to grant only limited access
+          (such as read-only access) to those Protected Resources.
+
+</p>
+<p>
+          When implementing OAuth, Service Providers should consider the types
+          of access Users may wish to grant Consumers, and should provide
+          mechanisms to do so. Service Providers should also take care to
+          ensure that Users understand the access they are granting, as well as
+          any risks that may be involved.
+
+</p>
+<a name="anchor43"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B.10"></a><h3>Appendix B.10.&nbsp;
+Entropy of Secrets</h3>
+
+<p>
+          Unless a transport-layer security protocol is used, eavesdroppers will
+          have full access to OAuth requests and signatures, and will thus be
+          able to mount offline brute-force attacks to recover the Consumer's
+          credentials used. Service Providers should be careful to assign Token
+          Secrets and Consumer Secrets which are long enough - and random enough
+          - to resist such attacks for at least the length of time that the
+          secrets are valid.
+
+</p>
+<p>
+          For example, if Token Secrets are valid for two weeks, Service
+          Providers should ensure that it is not possible to mount a brute force
+          attack that recovers the Token Secret in less than two weeks. Of
+          course, Service Providers are urged to err on the side of caution,
+          and use the longest secrets reasonable.
+
+</p>
+<p>
+          It is equally important that the pseudo-random number generator (PRNG)
+          used to generate these secrets be of sufficiently high quality. Many
+          PRNG implementations generate number sequences that may appear to be
+          random, but which nevertheless exhibit patterns or other weaknesses
+          which make cryptanalysis or brute force attacks easier. Implementors
+          should be careful to use cryptographically secure PRNGs to avoid these
+          problems.
+
+</p>
+<a name="anchor44"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B.11"></a><h3>Appendix B.11.&nbsp;
+Denial of Service / Resource Exhaustion Attacks</h3>
+
+<p>
+          The OAuth protocol has a number of features which may make resource
+          exhaustion attacks against Service Providers possible. For example,
+          if a Service Provider includes a nontrivial amount of entropy in Token
+          Secrets as recommended above, then an attacker may be able to exhaust
+          the Service Provider's entropy pool very quickly by repeatedly
+          obtaining Request Tokens from the Service Provider.
+
+</p>
+<p>
+          Similarly, OAuth requires Service Providers to track used nonces. If
+          an attacker is able to use many nonces quickly, the resources required
+          to track them may exhaust available capacity. And again, OAuth can
+          require Service Providers to perform potentially expensive computations
+          in order to verify the signature on incoming requests. An attacker may
+          exploit this to perform a denial of service attack by sending a large
+          number of invalid requests to the Service Provider.
+
+</p>
+<p>
+          Resource Exhaustion attacks are by no means specific to OAuth. However,
+          OAuth implementors should be careful to consider the additional
+          avenues of attack that OAuth exposes, and design their implementations
+          accordingly. For example, entropy starvation typically results in
+          either a complete denial of service while the system waits for new
+          entropy or else in weak (easily guessable) secrets. When implementing
+          OAuth, Service Providers should consider which of these presents a
+          more serious risk for their application and design accordingly.
+
+</p>
+<a name="anchor45"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B.12"></a><h3>Appendix B.12.&nbsp;
+Cryptographic Attacks</h3>
+
+<p>
+          SHA-1, the hash algorithm used in <tt>HMAC-SHA1</tt>
+          signatures, has been <a class='info' href='#SHA1'>shown<span> (</span><span class='info'>De Canniere, C. and C. Rechberger, &ldquo;Finding SHA-1 Characteristics: General Results and Applications,&rdquo; .</span><span>)</span></a> [SHA1] to have a number
+          of cryptographic weaknesses that significantly reduce its resistance to
+          collision attacks. Practically speaking, these weaknesses are difficult
+          to exploit, and by themselves do not pose a significant risk to users
+          of OAuth. They may, however, make more efficient attacks possible, and
+          NIST has <a class='info' href='#NIST'>announced<span> (</span><span class='info'>National Institute of Standards and Technolog, NIST., &ldquo;NIST Brief Comments on Recent Cryptanalytic Attacks on Secure Hashing Functions and the Continued Security Provided by SHA-1,&rdquo; .</span><span>)</span></a> [NIST] that it will phase out
+          use of SHA-1 by 2010. Service Providers should take this into account
+          when considering whether SHA-1 provides an adequate level of security
+          for their applications.
+
+</p>
+<a name="anchor46"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<a name="rfc.section.B.13"></a><h3>Appendix B.13.&nbsp;
+Signature Base String Compatibility</h3>
+
+<p>
+          The Signature Base String has been designed to support the signature
+          methods defined in this specification. When designing additional
+          signature methods, the Signature Base String should be evaluated to
+          ensure compatibility with the algorithms used.
+
+</p>
+<p>
+          The Signature Base String cannot guarantee the order in which parameters
+          are sent. If parameter ordering is important and affects the result of a
+          request, the Signature Base String will not protect against request
+          manipulation.
+
+</p>
+<a name="rfc.references1"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>11.&nbsp;References</h3>
+<table width="99%" border="0">
+<tr><td class="author-text" valign="top"><a name="NIST">[NIST]</a></td>
+<td class="author-text">National Institute of Standards and Technolog, NIST., &ldquo;<a href="http://csrc.nist.gov/hash_standards_comments.pdf">NIST Brief Comments on Recent Cryptanalytic Attacks on Secure Hashing Functions and the Continued Security Provided by SHA-1</a>.&rdquo;</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2045">[RFC2045]</a></td>
+<td class="author-text">Freed, N. and N. Borenstein, &ldquo;<a href="http://tools.ietf.org/html/rfc2045">Multipurpose Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies</a>,&rdquo; RFC&nbsp;2045.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2104">[RFC2104]</a></td>
+<td class="author-text">Krawczyk, H., Bellare, M., and R. Canetti, &ldquo;<a href="http://tools.ietf.org/html/rfc2104">HMAC: Keyed-Hashing for Message Authentication</a>,&rdquo; RFC&nbsp;2104.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2119">[RFC2119]</a></td>
+<td class="author-text">Bradner, B., &ldquo;<a href="http://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>,&rdquo; RFC&nbsp;2119.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2606">[RFC2606]</a></td>
+<td class="author-text">Eastlake, D. and A. Panitz, &ldquo;<a href="http://tools.ietf.org/html/rfc2606">Reserved Top Level DNS Names</a>,&rdquo; RFC&nbsp;2606.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2616">[RFC2616]</a></td>
+<td class="author-text">Fielding, R., Gettys, J., Mogul, J., Frystyk, H., Masinter, L., Leach, P., and T. Berners-Lee, &ldquo;<a href="http://tools.ietf.org/html/rfc2616">Hypertext Transfer Protocol -- HTTP/1.1</a>,&rdquo; RFC&nbsp;2616.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC2617">[RFC2617]</a></td>
+<td class="author-text">Franks, J., Hallam-Baker, P., Hostetler, J., Lawrence, S., Leach, P., Luotonen, A., and L. Stewart, &ldquo;<a href="http://tools.ietf.org/html/rfc2617">HTTP Authentication: Basic and Digest Access Authentication</a>,&rdquo; RFC&nbsp;2617.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC3447">[RFC3447]</a></td>
+<td class="author-text">Jonsson, J. and B. Kaliski, &ldquo;<a href="http://tools.ietf.org/html/rfc3447">Public-Key Cryptography Standards (PKCS) #1: RSA Cryptography; Specifications Version 2.1</a>,&rdquo; RFC&nbsp;3447.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC3629">[RFC3629]</a></td>
+<td class="author-text">Yergeau, F., &ldquo;<a href="http://tools.ietf.org/html/rfc3629">UTF-8, a transformation format of Unicode and ISO 10646</a>,&rdquo; RFC&nbsp;3629.</td></tr>
+<tr><td class="author-text" valign="top"><a name="RFC3986">[RFC3986]</a></td>
+<td class="author-text">Berners-Lee, T., &ldquo;<a href="http://tools.ietf.org/html/rfc3986">Uniform Resource Identifiers (URI): Generic Syntax</a>,&rdquo; RFC&nbsp;3986.</td></tr>
+<tr><td class="author-text" valign="top"><a name="SHA1">[SHA1]</a></td>
+<td class="author-text">De Canniere, C. and C. Rechberger, &ldquo;<a href="http://dx.doi.org/10.1007/11935230_1">Finding SHA-1 Characteristics: General Results and Applications</a>.&rdquo;</td></tr>
+</table>
+
+<a name="rfc.authors"></a><br /><hr />
+<table summary="layout" cellpadding="0" cellspacing="2" class="TOCbug" align="right"><tr><td class="TOCbug"><a href="#toc">&nbsp;TOC&nbsp;</a></td></tr></table>
+<h3>Author's Address</h3>
+<table width="99%" border="0" cellpadding="0" cellspacing="0">
+<tr><td class="author-text">&nbsp;</td>
+<td class="author-text">OAuth核心工作组</td></tr>
+<tr><td class="author" align="right">Email:&nbsp;</td>
+<td class="author-text"><a href="mailto:spec@oauth.net">spec@oauth.net</a></td></tr>
+</table>
+</body></html>

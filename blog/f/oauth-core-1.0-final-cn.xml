@@ -1,0 +1,1565 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type='text/xsl' href='http://xml.resource.org/authoring/rfc2629.xslt' ?>
+<!DOCTYPE rfc SYSTEM "rfc2629.dtd">
+
+<rfc category="info" ipr="full3978" docName="oauth-core-1_0.xml">
+
+  <?rfc toc="yes" ?>
+  <?rfc tocdepth="2" ?>
+  <?rfc symrefs="yes" ?>
+  <?rfc sortrefs="yes"?>
+  <?rfc strict="yes" ?>
+  <?rfc iprnotified="no" ?>
+  <?rfc private="Final" ?>
+
+  <front>
+    <title>OAuth 核心 1.0</title>
+
+    <author initials="" surname="OAuth" fullname="OAuth核心工作组">
+      <organization />
+      <address>
+        <email>spec@oauth.net</email>
+      </address>
+    </author>
+
+    <date day="4" month="December" year="2007"/>
+
+    <abstract>
+      <t>
+        OAuth协议致力于使网站和应用程序（统称为消费方）能够在无须用户透露其认证证书的情况下，通过API访问某个web服务（统称为服务提供方）的受保护资源。更一般地说，OAuth为API认证提供了一个可自由实现且通用的方法。
+      </t>
+      <t>
+        一个典型的例子是某打印服务提供商printer.example.com（消费方），希望在无须用户提供其照片存储站点密码的情况下，访问用户储存在photos.example.net（服务提供方）上的个人照片。
+      </t>
+      <t>
+        OAuth不强求一个特定的用户接口或操作模式，也不限定服务提供方如何验证用户，特别适合认证证书对消费方不可用的情况，例如OpenID。
+      </t>
+      <t>
+        OAuth致力于为托管web服务认证提供统一的体验和实现，形成一个社区驱动的协议。OAuth构建于已被多个站点独立实现的已有协议和最佳化实践之上，是一个被大小服务提供者所支持、并为应用开发者和用户增进持续性和可信度的开放标准。
+      </t>
+    </abstract>
+
+  </front>
+  <middle>
+
+    <section title="作者">
+      <t>
+        <list style="empty">
+          <t>Mark Atwood (me@mark.atwood.name)</t>
+          <t>Richard M. Conlan (zeveck@google.com)</t>
+          <t>Blaine Cook (blaine@twitter.com)</t>
+          <t>Leah Culver (leah@pownce.com)</t>
+          <t>Kellan Elliott-McCrea (kellan@flickr.com)</t>
+          <t>Larry Halff (larry@ma.gnolia.com)</t>
+          <t>Eran Hammer-Lahav (eran@hueniverse.com)</t>
+          <t>Ben Laurie (benl@google.com)</t>
+          <t>Chris Messina (chris@citizenagency.com)</t>
+          <t>John Panzer (jpanzer@acm.org)</t>
+          <t>Sam Quigley (quigley@emerose.com)</t>
+          <t>David Recordon (david@sixapart.com)</t>
+          <t>Eran Sandler (eran@yedda.com)</t>
+          <t>Jonathan Sergent (sergent@google.com)</t>
+          <t>Todd Sieling (todd@ma.gnolia.com)</t>
+          <t>Brian Slesinsky (brian-oauth@slesinsky.org)</t>
+          <t>Andy Smith (andy@jaiku.com)</t>
+        </list>
+      </t>
+    </section>
+
+    <section title="记号与惯例">
+      <t>
+        本文中的这些关键词“必须”、“不得”、“要求”、“应”、“不应”、“需”、“不可”、“推荐”、“可以”和“可选”在<xref target="RFC2119" />中解释。
+        例子中的域名参考<xref target="RFC2606" />。
+      </t>
+    </section>
+
+    <section title="术语定义">
+
+      <t>
+        <list style="hanging">
+          <t hangText="服务提供方 Service Provider:">
+            一个允许通过OAuth访问的web应用程序。
+          </t>
+          <t hangText="用户 User:">
+            在服务提供方处拥有帐号的个人。
+          </t>
+          <t hangText="消费方 Consumer:">
+            一个代表用户以OAuth形式访问服务提供方的网站或应用程序。
+          </t>
+          <t hangText="受保护资源 Protected Resource(s):">
+            服务提供方所掌控的数据，能被通过用户认证的消费方访问。
+          </t>
+          <t hangText="消费方开发者 Consumer Developer:">
+            实现消费方的个人或组织。
+          </t>
+          <t hangText="消费方键值 Consumer Key:">
+            消费方用来向服务提供方标示身份的值。
+          </t>
+          <t hangText="消费方密钥 Consumer Secret:">
+            消费方用于建立对消费方键值所有权的密钥。
+          </t>
+          <t hangText="请求令牌 Request Token:">
+            消费方用于从用户处获得授权并换取请求令牌的值。
+          </t>
+          <t hangText="访问令牌 Access Token:">
+            消费方用于代表用户在没有密码的情况下访问受保护资源的值。
+          </t>
+          <t hangText="令牌密钥 Token Secret:">
+            消费方用于建立对特定令牌所有权的密钥。
+          </t>
+          <t hangText="OAuth协议参数 OAuth Protocol Parameters:">
+            参数名称，以<spanx style="verb">oauth_</spanx>开头。
+          </t>
+        </list>
+      </t>
+    </section>
+
+    <section title="文档与注册">
+      <t>
+        在OAuth里，服务提供方以一组消费方键值和消费方密钥来鉴定消费方（正如用登录名和密码来鉴定用户）。 这种识别方式使得服务提供方可以向消费方开放不同的访问级别。
+      </t>
+      <t>
+        服务提供方不应依赖消费方密钥来验证消费方的身份，除非能确保消费方密钥不被第三方获知。消费方密钥可以是一个空串，例如消费方无需验证或使用RSA等其他方式验证。
+      </t>
+
+      <section title="请求URL" anchor="request_urls">
+        <t>
+          OAuth定义了三种类型的请求URL:
+
+          <list style="hanging">
+            <t hangText="请求令牌URL:">
+              用于获得一个未授权的请求令牌，详见<xref target="auth_step1" />.
+            </t>
+            <t hangText="用户授权URL:">
+              用于用户向消费方授权，详见<xref target="auth_step2" />.
+            </t>
+            <t hangText="Access Token URL:">
+              用于将已授权的请求令牌换取访问令牌，详见<xref target="auth_step3" />.
+            </t>
+          </list>
+        </t>
+        <t>
+          三种URL必须包含方案、授权和路径，可以包含<xref target="RFC3986" />第三部分所定义的查询和片段，不得（MUST NOT）包含任何OAuth协议参数。例如：
+
+          <figure>
+            <artwork>
+              http://sp.example.com/authorize
+            </artwork>
+          </figure>
+        </t>
+      </section>
+
+      <section title="服务提供方">
+        <t>
+          服务提供方负责为消费方开发者创建消费方键值和消费方密钥，所需条件和过程由服务提供方决定。
+        </t>
+        <t>
+          服务提供方文档包括：
+
+          <list style="numbers">
+            <t>
+              消费方所使用的<xref target="request_urls">请求URL</xref>、访问请求令牌URL和访问令牌URL所使用的HTTP方法。
+            </t>
+            <t>
+              服务提供方支持的签名方法。
+            </t>
+            <t>
+              获取令牌所需的其他附加请求参数，不得以<spanx style="verb">oauth_</spanx>开头。
+            </t>
+          </list>
+        </t>
+      </section>
+
+      <section title="消费方">
+        <t>
+          消费方开发者必须在服务提供者处创建一组消费方键值和消费方密钥。注册时开发者可能会被服务提供方要求提供某些附加信息。
+        </t>
+      </section>
+
+    </section>
+
+    <section title="参数">
+      <t>
+        OAuth协议的参数名称和值都是大小写敏感的。每次请求中的参数不得重复出现，除非说明否则都是必须的。
+      </t>
+
+      <section title="参数编码" anchor="encoding_parameters">
+        <t>
+          所有参数名称和值都必须根据<xref target="RFC3986" />所定义的百分号机制进行转义。
+          保留字符集(<xref target="RFC3986" /> section 2.3)内的不得被编码，其它的必须被编码，编码后的十六进制字符必须大写。
+          百分号转换前的参数名称和值的文本必须是UTF-8编码，见<xref target="RFC3629" />。
+        </t>
+        <figure>
+          <artwork>
+            非保留字符 = 字母, 数字, '-', '.', '_', '~'
+          </artwork>
+        </figure>
+      </section>
+
+      <section title="消费方请求参数" anchor="consumer_req_param">
+        <t>
+          从消费方向服务提供方发送OAuth协议参数使用以下三种形式之一（按优先度降序）：
+          <list style="numbers">
+            <t>
+              <xref target="auth_header">OAuth HTTP认证方案</xref>中定义的HTTP <spanx style="verb">Authorization</spanx>首部。
+            </t>
+            <t>
+              一个<spanx style="verb">content-type</spanx>为<spanx style="verb">application/x-www-form-urlencoded</spanx>的HTTP POST请求体内。
+            </t>
+            <t>
+              作为URL中的查询部分（定义于<xref target="RFC3986" />第三部分）。
+            </t>
+          </list>
+        </t>
+        <t>
+          另外，未来的扩展部分可能增加额外的方式以传送OAuth协议参数。发送其他请求参数的方法不被定义，但不应使用<xref target="auth_header">OAuth HTTP 认证方案</xref>首部.
+        </t>
+      </section>
+
+      <section title="服务提供方响应参数" anchor="response_parameters">
+        <t>
+          服务提供方在HTTP响应体内向消费方返回令牌和其他信息。参数名称和值先按照<xref target="encoding_parameters">参数编码</xref>所述进行编码 ，然后按照<xref target="RFC3986" /> Section 2.1 定义的方式用'&amp;'字符(ASCII代码38)连接起来，例如：
+        </t>
+        <figure>
+          <artwork>
+            oauth_token=ab3cd9j4ks73hf7g&amp;oauth_token_secret=xyz4992k83j47x0b
+          </artwork>
+        </figure>
+      </section>
+
+      <section title="OAuth HTTP认证方案" anchor="auth_header">
+        <t>
+          本部分定义了<xref target="RFC2617" />以支持OAuth。使用标准的HTTP <spanx style="verb">Authorization</spanx>和<spanx style="verb">WWW-Authenticate</spanx>首部来传送OAuth协议参数。
+        </t>
+        <t>
+          推荐服务提供方接受HTTP <spanx style="verb">Authorization</spanx>首部，消费方应当能够以<spanx style="verb">Authorization</spanx>首部形式发送OAuth参数。
+        </t>
+        <t>
+          扩展的认证方案(由<xref target="RFC2617" />定义)是大小写不敏感的<spanx style="verb">OAuth</spanx>。
+        </t>
+
+        <section title="Authorization 首部" anchor="auth_header_authorization">
+          <t>
+            <spanx style="verb">Authorization</spanx>首部中的OAuth协议参数按照以下规则发送：
+
+            <list style="numbers">
+              <t>
+                参数和值按照<xref target="encoding_parameters">Parameter Encoding</xref>编码。
+              </t>
+              <t>
+                每个参数名后跟一个'='字符(ASCII代码61)、一个'"'字符(ASCII代码34)、参数值(可以为空)和另一个'"'字符(ASCII代码34)。
+              </t>
+              <t>
+                依照<xref target="RFC2617" />，多个参数以逗号(ASCII代码44)分隔，外加一个可选的换行和空白。
+              </t>
+              <t>
+                可选参数<spanx style="verb">realm</spanx>按照<xref target="RFC2617" />, section 1.2 被添加和解释。
+              </t>
+            </list>
+          </t>
+          <t>
+            例如：
+            <figure>
+              <artwork>
+                Authorization: OAuth realm="http://sp.example.com/",
+                oauth_consumer_key="0685bd9184jfhq22",
+                oauth_token="ad180jjd733klru7",
+                oauth_signature_method="HMAC-SHA1",
+                oauth_signature="wOJIO9A2W5mFwDgiDvZbTSMK%2FPY%3D",
+                oauth_timestamp="137131200",
+                oauth_nonce="4572616e48616d6d65724c61686176",
+                oauth_version="1.0"
+              </artwork>
+            </figure>
+          </t>
+        </section>
+
+        <section title="WWW-Authenticate 首部">
+          <t>
+            消费方请求受保护资源时，服务提供方可以返回OAuth HTTP <spanx style="verb">WWW-Authenticate</spanx>首部表明对OAuth扩展的支持。
+            按照<xref target="RFC2617" /> ，回应可以包含附加的<spanx style="verb">WWW-Authenticate</spanx>头：
+          </t>
+          <t>
+            例如：
+            <figure>
+              <artwork>
+                WWW-Authenticate: OAuth realm="http://sp.example.com/"
+              </artwork>
+            </figure>
+          </t>
+          <t>
+            按照<xref target="RFC2617" />, section 1.2，realm参数定义了受保护区域，
+          </t>
+        </section>
+
+      </section>
+
+    </section>
+
+    <section title="使用OAuth认证">
+      <t>
+        OAuth认证是指用户在不共享其证书（密码）的前提下授权消费方访问其受保护资源的过程。
+        在请求受保护资源的过程中OAuth使用服务提供方生成的令牌替代了用户的证书。
+        这一过程使用两种类型的令牌：
+
+        <list style="hanging">
+          <t hangText="请求令牌:">
+            用于消费方向用户请求对访问受保护资源的授权。
+            经过用户授权的请求令牌可以换取一个访问令牌，只能使用一次，不得用于其他用途。
+            建议为请求令牌设置一个有限的生命期。
+          </t>
+          <t hangText="访问令牌:">
+            用于消费方代表用户访问受保护资源。
+            访问令牌可以被用于限制访问特定资源，可以只有有限的生命期。
+            服务提供方应当允许用户收回访问令牌。应当只有访问令牌被用于访问受保护资源。
+          </t>
+        </list>
+      </t>
+      <t>
+        OAuth认证由以下三个步骤完成：
+
+        <list style="numbers">
+          <t>
+            消费方获得未授权的请求令牌。
+          </t>
+          <t>
+            用户授权请求令牌。
+          </t>
+          <t>
+            消费方用请求令牌换取访问令牌。
+          </t>
+        </list>
+      </t>
+
+      <section title="获取未授权的请求令牌" anchor="auth_step1">
+        <t>
+          消费方向服务提供方的请求令牌URL发起一个HTTP请求，服务提供方的文档指定了可以使用的HTTP方法，推荐使用POST。
+          请求必须被签署并包含以下参数：
+        </t>
+
+        <section title="消费方获取请求令牌" anchor="obtain_request_token">
+          <t>
+            消费方向服务提供方的请求令牌URL发起一个HTTP请求，服务提供方的文档指定了可以使用的HTTP方法，推荐使用POST。
+            请求必须被签署并包含以下参数：
+
+            <list style="hanging">
+              <t hangText="oauth_consumer_key:">
+                消费方键值。
+              </t>
+              <t hangText="oauth_signature_method:">
+                消费方签署本请求所用的签名方法。
+              </t>
+              <t hangText="oauth_signature:">
+                签名，定义于<xref target="signing_process">签署请求</xref>。
+              </t>
+              <t hangText="oauth_timestamp:">
+                定义于<xref target="nonce">Nonce and Timestamp</xref>。
+              </t>
+              <t hangText="oauth_nonce:">
+                定义于<xref target="nonce">Nonce and Timestamp</xref>。
+              </t>
+              <t hangText="oauth_version:">
+                可选。如果存在，其值必须为<spanx style="verb">1.0</spanx>。如果参数不存在，服务提供方必须假定协议版本为<spanx style="verb">1.0</spanx>。
+                服务提供方对<spanx style="verb">1.0</spanx>以外取值的响应尚未定义。
+              </t>
+              <t hangText="额外参数:">
+                由服务提供方定义的任意额外参数。
+              </t>
+            </list>
+          </t>
+        </section>
+
+        <section title="服务提供方签发未授权的请求令牌" anchor="request_grant">
+          <t>
+            服务提供方校验签名和消费方键值。如果成功则生成一个请求令牌和令牌密钥并在HTTP响应体中返回，见<xref target="response_parameters">服务提供方响应参数</xref>。服务提供方必须确保请求令牌在用户授权成功之前不能被换取访问令牌，见<xref target="auth_step2">获取用户授权</xref>.
+          </t>
+          <t>
+            响应包含如下参数：
+
+            <list style="hanging">
+              <t hangText="oauth_token:">
+                请求令牌
+              </t>
+              <t hangText="oauth_token_secret:">
+                令牌密钥
+              </t>
+              <t hangText="附加参数:">
+                由服务提供方定义的任意参数。
+              </t>
+            </list>
+          </t>
+          <t>
+            如果请求验证失败或由于其他原因被拒绝，服务提供方应当回应以适当的响应代码，见<xref target="http_codes">HTTP响应代码</xref>。服务提供方可以在响应体内包含关于被拒绝原因的详细信息，见<xref target="response_parameters">服务提供方相应参数</xref>。
+          </t>
+        </section>
+
+      </section>
+
+      <section title="获取用户授权" anchor="auth_step2">
+        <t>
+           获取用户授权之前，消费方不能使用使用请求令牌。获取用户授权包含以下步骤：
+        </t>
+
+        <section title="消费方引导用户至服务提供方" anchor="user_auth_redirected">
+          <t>
+            为了能够换取访问令牌，消费方必须引导用户到服务提供方处并获得用户的核准。为此，消费方构造一个指向服务提供方用户授权URL的HTTP GET请求，包含以下参数：
+
+            <list style="hanging">
+              <t hangText="oauth_token:">
+                 可选。在前述步骤中获得的请求令牌。服务提供方可以声明此参数为必须，也可以允许不包含在授权URL中并提示用户手工输入。
+              </t>
+              <t hangText="oauth_callback:">
+                 可选。消费方可以指定一个URL，当
+                <xref target="auth_step2">获取用户授权</xref>成功后，服务提供方将重定向用户到这个URL。
+              </t>
+              <t hangText="附加参数:">
+                由服务提供方定义的任意参数。
+              </t>
+            </list>
+          </t>
+          <t>
+            消费方构造请求URL并通过用户的浏览器将用户重定向到该地址。如果消费方无法自动进行HTTP重定向，则须告知用户如何手工访问该地址。
+          </t>
+          <t>
+            注意：如果服务提供方已知消费方运行于移动设备或机顶盒, 则应保证用户授权URL和请求令牌适于手工输入。
+          </t>
+        </section>
+
+        <section title="服务提供方认证用户并获取许可">
+          <t>
+
+            服务提供方验证用户身份并询问用户是否许可。OAuth不指定服务提供方如何鉴定用户，但定义了以下必须的步骤：
+
+            <list style="symbols">
+              <t>
+                服务提供方询问用户许可前，必须先验证用户身份，如用户未登录可以要求其先登录。
+              </t>
+              <t>
+                服务提供方向用户展示消费方访问请求相关的信息，包括访问时限、被访问资源等，也可以包含其他 服务提供方指定的信息。
+              </t>
+              <t>
+                用户必须授权或否决服务提供方允许消费方代表用户访问受保护资源。一旦用户否决，服务提供方不得允许消费方访问受保护资源。
+              </t>
+            </list>
+          </t>
+          <t>
+            当服务提供方根据消费方键值显示关于消费方的信息时，必须向用户告知其是否能确保此信息的确实可靠，而所使用的方式不在本规范讨论范围之内。
+          </t>
+        </section>
+
+        <section title="服务提供方将用户引导回消费方">
+          <t>
+            用户通过服务提供方认证并对消费方授权后，消费方必须被告知请求令牌已被授权并可以交换访问令牌。如果用户否决的访问，则消费方可以被告知请求令牌已被回收。
+          </t>
+          <t>
+            如果消费方在<spanx style="verb">oauth_callback</spanx>中提供了回调URL(在<xref target="user_auth_redirected">消费方引导用户至服务提供方</xref>中描述)，则服务提供方构造一个HTTP GET请求URL，重定向用户浏览器到该URL，并包含如下参数：
+
+            <list style="hanging">
+              <t hangText="oauth_token:">
+                被用户授权或否决的请求令牌
+              </t>
+            </list>
+          </t>
+          <t>
+            回调URL可以包含消费方提供的查询参数，服务提供方必须保持已有查询不变并追加<spanx style="verb">oauth_token</spanx>参数。
+          </t>
+          <t>
+            如果没有提供回调URL则服务提供方告知用户手工通知消费方授权完成。
+          </t>
+        </section>
+
+      </section>
+
+      <section title="获取访问令牌" anchor="auth_step3">
+        <t>
+          消费方用请求令牌换取访问令牌以访问受保护资源。获取访问令牌包含以下步骤：
+        </t>
+
+        <section title="消费方请求访问令牌">
+          <t>
+            请求令牌及其密钥必须被交换为访问令牌及其密钥。
+          </t>
+          <t>
+            消费方向服务提供方发起一个HTTP请求以获取访问令牌。服务提供方的文档指定了所使用的HTTP方法，建议使用POST。请求必须按照<xref target="signing_process">签署请求</xref>签署， 并包含以下参数：
+
+            <list style="hanging">
+              <t hangText="oauth_consumer_key:">
+                消费方键值。
+              </t>
+              <t hangText="oauth_token:">
+                之前获取的请求令牌。
+              </t>
+              <t hangText="oauth_signature_method:">
+                消费方使用的签署方法。
+              </t>
+              <t hangText="oauth_signature:">
+                <xref target="signing_process">签署请求</xref>中定义的签名。
+              </t>
+              <t hangText="oauth_timestamp:">
+                在<xref target="nonce">单次值与时间戳</xref>中定义。
+              </t>
+              <t hangText="oauth_nonce:">
+                在<xref target="nonce">单次值与时间戳</xref>中定义。
+              </t>
+              <t hangText="oauth_version:">
+                可选。如果存在，其值必须为<spanx style="verb">1.0</spanx>。如果参数不存在，服务提供方必须假定协议版本为<spanx style="verb">1.0</spanx>。
+                服务提供方对<spanx style="verb">1.0</spanx>以外取值的响应尚未定义。
+              </t>
+            </list>
+          </t>
+          <t>
+            请求访问令牌时，不得包含其他服务提供方指定的附加参数，以确保所有令牌相关信息都是之前用户确认时存在的。
+          </t>
+        </section>
+
+        <section title="服务提供方授予访问令牌" anchor="access_grant">
+          <t>
+            服务提供方必须确保：
+
+            <list style="symbols">
+              <t>
+                请求签名验证成功。
+              </t>
+              <t>
+                请求令牌从未被交换过访问令牌。
+              </t>
+              <t>
+                请求令牌与消费方键值相符。
+              </t>
+            </list>
+          </t>
+          <t>
+            如果成功，服务提供方生成访问令牌及其密钥，并在HTTP响应体中返回，如<xref target="response_parameters">服务提供方响应参数</xref>之定义。消费方保存访问令牌及其密钥，并用以签署对受保护资源的请求。响应包含如下参数：
+
+            <list style="hanging">
+              <t hangText="oauth_token:">
+                访问令牌。
+              </t>
+              <t hangText="oauth_token_secret:">
+                令牌密钥。
+              </t>
+              <t hangText="附加参数:">
+                服务提供方指定的附加参数。
+              </t>
+            </list>
+          </t>
+          <t>
+            如果请求验证失败或由于其他原因被拒绝，服务提供方应当回应以适当的响应代码，见<xref target="http_codes">HTTP响应代码</xref>。服务提供方可以在响应体内包含关于被拒绝原因的详细信息，见<xref target="response_parameters">服务提供方响应参数</xref>。
+          </t>
+        </section>
+
+      </section>
+
+    </section>
+
+    <section title="访问受保护资源">
+      <t>
+        成功收到访问令牌及其密钥后，消费方即可代表用户访问受保护资源。
+        请求必须按照<xref target="signing_process">签署请求</xref>进行签署，并包含如下参数：
+
+        <list style="hanging">
+          <t hangText="oauth_consumer_key:">
+            消费方键值。
+          </t>
+          <t hangText="oauth_token:">
+            访问令牌。
+          </t>
+          <t hangText="oauth_signature_method:">
+            消费方使用的签署方法。
+          </t>
+          <t hangText="oauth_signature:">
+            <xref target="signing_process">签署请求</xref>中定义的签名。
+          </t>
+          <t hangText="oauth_timestamp:">
+            定义于<xref target="nonce">单次值与时间戳</xref>.
+          </t>
+          <t hangText="oauth_nonce:">
+            定义于<xref target="nonce">单次值与时间戳</xref>.
+          </t>
+          <t hangText="oauth_version:">
+            可选。如果存在，其值必须为<spanx style="verb">1.0</spanx>。如果参数不存在，服务提供方必须假定协议版本为<spanx style="verb">1.0</spanx>。
+            服务提供方对<spanx style="verb">1.0</spanx>以外取值的响应尚未定义。
+          </t>
+          <t hangText="附加参数:">
+            服务提供方指定的附加参数。
+          </t>
+        </list>
+      </t>
+    </section>
+
+    <section title="单次值与时间戳" anchor="nonce">
+      <t>
+        请求时间戳用格林威治时间1970年1月1日0时0分0秒起的秒数表示，除非服务提供方另外指定。
+        请求时间戳必须是个正整数，并必须不小于上一个请求中的时间戳。
+      </t>
+      <t>
+        消费方必须为一个时间戳的所有请求的生成不同的单次值。
+        单次值是一个随机字符串，是为每次请求生成的唯一值。
+        服务提供方用单次值验证一个请求之前从未被发起过，有助于防止非安全通道（例如HTTP）上的重放攻击。
+      </t>
+    </section>
+
+    <section title="签署请求" anchor="signing_process">
+      <t>
+        所有对令牌和受保护资源的请求都必须被消费方签署并由服务提供方验证。
+        对请求进行签署是为了防止未经授权的第三方使用使用消费方键值和令牌请求令牌和受保护资源。
+        签署的过程是将消费方密钥和令牌密钥编码为可校验的值并包含在请求中。
+      </t>
+      <t>
+		OAuth不强制要求特定的签署方法，每个实现可以有其特定的要求。
+		协议定义了三种方法：<spanx style="verb">HMAC-SHA1</spanx>、<spanx style="verb">RSA-SHA1</spanx>和<spanx style="verb">PLAINTEXT</spanx>，服务提供者也可自由实现并在文档中描述其他办法。
+		对特定签署方法的推荐不在本文表述范围之内。
+      </t>
+      <t>
+        消费方在<spanx style="verb">oauth_signature_method</spanx>参数中声明一个签署方法，生成一个签名并存储于<spanx style="verb">oauth_signature</spanx>参数中。
+        服务提供方根据指定的方法验证签名。
+        验证签名时，服务提供方应检查单次值，确保之前的请求中未被使用过。
+      </t>
+      <t>
+        签署过程中，不得改变除<spanx style="verb">oauth_signature</spanx>外的任何参数。
+      </t>
+
+      <section title="签署基字符串">
+        <t>
+          签署基字符串（Signature Base String）就是将请求元素串接为单个字符串，该过程的结果是一致的、可重复的。
+          该字符串用于散列或签署算法的输入。
+          <spanx style="verb">HMAC-SHA1</spanx>签署方法提供了签署基字符串用于签署算法的一个标准和实例。
+          生成签署基字符串所有请求参数必须按照<xref target="encoding_parameters">参数编码</xref>进行编码。
+        </t>
+
+        <section title="正常化请求参数" anchor="sig_norm_param">
+          <t>
+            请求参数被收集起来，排序并串接为一个普通的字符串：
+            <list style="symbols">
+              <t>
+                除<spanx style="verb">realm</spanx>以外<xref target="auth_header_authorization">
+                  OAuth HTTP Authorization 首部
+                </xref>中的参数
+              </t>
+              <t>
+                HTTP POST请求体中的参数（<spanx style="verb">content-type</spanx>为<spanx style="verb">application/x-www-form-urlencoded</spanx>）。
+              </t>
+              <t>
+                HTTP GET URL中的查询部分参数(定义于
+                <xref target="RFC3986" /> section 3).
+              </t>
+            </list>
+          </t>
+          <t>
+            <spanx style="verb">oauth_signature</spanx>参数必须被排除。
+          </t>
+          <t>
+            参数按照以下方式正常化为一个字符串：
+            <list style="numbers">
+              <t>
+                按照参数名字典顺序排序。同名参数按其值排序，例如：
+
+                <figure>
+                  <artwork>
+                    a=1, c=hi%20there, f=25, f=50, f=a, z=p, z=t
+                  </artwork>
+                </figure>
+              </t>
+              <t>
+                已排序参数串接为一个字符串。
+                每个参数名后跟一个“=”字符（ASCII代码61），无论参数值是否为空。
+                每对参数之间用“&amp;”字符（ASCII代码38）分开。例如：
+                <figure>
+                  <artwork>
+                    a=1&amp;c=hi%20there&amp;f=25&amp;f=50&amp;f=a&amp;z=p&amp;z=t
+                  </artwork>
+                </figure>
+              </t>
+            </list>
+          </t>
+        </section>
+
+        <section title="构造请求URL" anchor="sig_url">
+          <t>
+            签署基字符串包含了请求的绝对URL，以确保签名和特定终点的捆绑。
+            签署基字符串中的URL必须包含方案、授权和路径，必须排除<xref target="RFC3986" /> section 3所定义的查询和片段部分。
+          </t>
+          <t>
+            如果绝对地址对服务提供方不可用（对消费方总是可用的），则根据当前使用的方案、HTTP <spanx style="verb">Host</spanx>
+            首部、相对请求URL组合而成。
+            如果<spanx style="verb">Host</spanx>首部不可用，则服务提供方应使用文档中或其他方式下对消费方通讯使用的主机名。
+          </t>
+          <t>
+            服务提供方应当在文档中说明签署基字符串中所使用URL的形式，以避免URL正常化过程中混淆。
+            除非特别指定，URL方案和认证都必须小写，并包含端口号；HTTP默认端口80和HTTPS默认端口443必须被排除。
+          </t>
+          <t>
+            例如，如下请求：
+
+            <figure>
+              <artwork>
+                HTTP://Example.com:80/resource?id=123
+              </artwork>
+            </figure>
+
+            在签署基字符串中被包含为如下：
+            <figure>
+              <artwork>
+                http://example.com/resource
+              </artwork>
+            </figure>
+          </t>
+        </section>
+
+        <section title="串接请求字符串">
+          <t>
+            以下项必须被依次串接成为一个字符串。
+            每一项都按照<xref target="encoding_parameters">编码参数</xref>进行编码，无论是否为空都用“&amp;”字符（ASCII代码38）分开。
+
+            <list style="numbers">
+              <t>
+                发送请求所使用的HTTP方法，必须大写，例如：
+                <spanx style="verb">HEAD</spanx>、<spanx style="verb">GET</spanx>、<spanx style="verb">POST</spanx>等。
+              </t>
+              <t>
+                前述<xref target="sig_url">构造请求URL</xref>.
+              </t>
+              <t>
+                前述<xref target="sig_norm_param">请求参数正常化</xref>得到的字符。
+              </t>
+            </list>
+          </t>
+          <t>
+            参考<xref target="sig_base_example" />中的范例。
+          </t>
+        </section>
+
+      </section>
+
+      <section title="HMAC-SHA1">
+        <t>
+          <spanx style="verb">HMAC-SHA1</spanx>签署方式使用<xref target="RFC2104" />中定义的HMAC-SHA1签署算法，把签署基字符串作为<spanx style="verb">text</spanx>，
+          <spanx style="verb">key</spanx>则由先按照<xref target="encoding_parameters">参数编码</xref>进行编码再用“&amp;”字符（ASCII代码38）分隔（无论是否为空）的消费方密钥和令牌密钥串接而成。
+        </t>
+
+        <section title="生成签名">
+          <t>
+            <spanx style="verb">oauth_signature</spanx>被设置为<spanx style="verb">digest</spanx>字节串，
+            先按照<xref target="RFC2045" /> section 6.8 base64编码, 再按照<xref target="encoding_parameters">参数编码</xref>进行URL编码。
+          </t>
+        </section>
+
+        <section title="验证签名">
+          <t>
+            服务提供方使用如下步骤验证请求：
+            首先生成一个新的请求签名，将消费方提供的签名先按照<xref target="encoding_parameters">Parameter Encoding</xref>进行请求解码，
+            再按照 <xref target="RFC2045" /> section 6.8 进行base64解码，然后将两者进行比较。
+            服务提供方用于生成签名的是消费方的请求参数及本地存储的消费方密钥和令牌密钥。
+          </t>
+        </section>
+
+      </section>
+
+      <section title="RSA-SHA1">
+        <t>
+          <spanx style="verb">RSA-SHA1</spanx>签署方式使用<xref target="RFC3447" /> section 8.2 (通常被称为 PKCS#1)中定义的RSASSA-PKCS1-v1_5签署算法，使用SHA-1作为EMSA-PKCS1-v1_5的散列算法。假定消费方已通过某种可验证的途径（不在本规范讨论范围之内）向服务提供方提供了RSA公钥。
+        </t>
+
+        <section title="生成签名">
+          <t>
+            签署基字符串按照<xref target="RFC3447" /> section 8.2.1 使用消费方的RSA私钥进行签署，
+            <spanx style="verb">K</spanx> 为消费方的RSA私钥，<spanx style="verb">M</spanx>为签署基字符串，<spanx style="verb">S</spanx>为签署结果字节串：
+
+            <figure>
+              <artwork>
+                S = RSASSA-PKCS1-V1_5-SIGN (K, M)
+              </artwork>
+            </figure>
+          </t>
+          <t>
+            <spanx style="verb">oauth_signature</spanx>被设置为<spanx style="verb">S</spanx>，先按照
+            <xref target="RFC2045" /> section 6.8 进行base64编码，然后按照
+            <xref target="encoding_parameters">Parameter Encoding</xref>进行URL编码。
+          </t>
+        </section>
+
+        <section title="验证签名">
+          <t>
+            服务提供方按照<xref target="RFC3447" />section 8.2.2 验证签名，
+            其中<spanx style="verb">(n, e)</spanx> 为消费方RSA公钥，
+            <spanx style="verb">M</spanx>为签署基字符串，
+            <spanx style="verb">S</spanx>为<spanx style="verb">oauth_signature</spanx>代表的字节值：
+
+            <figure>
+              <artwork>
+                RSASSA-PKCS1-V1_5-VERIFY ((n, e), M, S)
+              </artwork>
+            </figure>
+          </t>
+        </section>
+
+      </section>
+
+      <section title="PLAINTEXT">
+        <t>
+          纯文本（<spanx style="verb">PLAINTEXT</spanx>）方式不提供任何安全保护，应当仅被用于安全通道如HTTPS之上。该方式不使用签署基字符串。
+        </t>
+        <section title="生成签名">
+          <t>
+            <spanx style="verb">oauth_signature</spanx>被设置为编码后的消费方密钥和令牌密钥的串接值，用'&amp;'字符(ASCII代码38)分隔，无论密钥是否为空。
+            结果必须被再次编码。
+          </t>
+          <t>
+            以下例子给出了在消费方密钥为<spanx style="verb">djr9rjt0jd78jf88</spanx>，
+            而令牌密钥分别为三个不同的值时得到的<spanx style="verb">oauth_signature</spanx>值：
+
+            <list style="hanging">
+              <t hangText="jjd999tj88uiths3:">
+                <spanx style="verb">oauth_signature</spanx>=<spanx style="verb">djr9rjt0jd78jf88%26jjd999tj88uiths3</spanx>
+              </t>
+              <t hangText="jjd99$tj88uiths3:">
+                <spanx style="verb">oauth_signature</spanx>=<spanx style="verb">djr9rjt0jd78jf88%26jjd99%2524tj88uiths3</spanx>
+              </t>
+              <t hangText="空:">
+                <spanx style="verb">oauth_signature</spanx>=<spanx style="verb">djr9rjt0jd78jf88%26</spanx>
+              </t>
+            </list>
+          </t>
+        </section>
+
+        <section title="验证签名">
+          <t>
+            服务提供方将签名拆分出消费方密钥和令牌密钥，分别与本地存储的值进行比较验证。
+          </t>
+        </section>
+
+      </section>
+
+    </section>
+
+    <section title="HTTP响应代码" anchor="http_codes">
+      <t>
+        本部分仅适用于对请求令牌和访问令牌的请求。一般地说，服务提供方应当使用<xref target="RFC2616" /> Section 10中定义的响应代码。
+        当服务提供方拒绝一个消费方的请求时，应当返回HTTP 400 Bad Request 或HTTP 401 Unauthorized。
+
+        <list style="symbols">
+          <t>
+            HTTP 400 Bad Request
+            <list style="symbols">
+              <t>
+                Unsupported parameter
+              </t>
+              <t>
+                Unsupported signature method
+              </t>
+              <t>
+                Missing required parameter
+              </t>
+              <t>
+                Duplicated OAuth Protocol Parameter
+              </t>
+            </list>
+          </t>
+          <t>
+            HTTP 401 Unauthorized
+            <list style="symbols">
+              <t>
+                Invalid Consumer Key
+              </t>
+              <t>
+                Invalid / expired Token
+              </t>
+              <t>
+                Invalid signature
+              </t>
+              <t>
+                Invalid / used nonce
+              </t>
+            </list>
+          </t>
+        </list>
+      </t>
+    </section>
+
+    <appendix title="Appendix A - Protocol Example">
+      <t>
+        In this example, the Service Provider photos.example.net is a photo
+        sharing website, and the Consumer printer.example.com is a photo
+        printing website. Jane, the User, would like printer.example.com to
+        print the private photo <spanx style="verb">
+          vacation.jpg
+        </spanx> stored at photos.example.net.
+      </t>
+      <t>
+        When Jane signs-into photos.example.net using her username and
+        password, she can access the photo by going to the URL
+        <spanx style="verb">http://photos.example.net/photo?file=vacation.jpg</spanx>. Other Users
+        cannot access that photo, and Jane does not want to share her
+        username and password with printer.example.com.
+      </t>
+      <t>
+        The requests in this example use the URL query method when sending
+        parameters. This is done to simplify the example and should not be
+        taken as an endorsement of one method over the others.
+      </t>
+
+      <appendix title="Documentation and Registration">
+        <t>
+          The Service Provider documentation explains how to register for a
+          Consumer Key and Consumer Secret, and declares the following URLs:
+
+          <list style="hanging">
+            <t hangText="Request Token URL:">
+              https://photos.example.net/request_token, using HTTP POST
+            </t>
+            <t hangText="User Authorization URL:">
+              http://photos.example.net/authorize, using HTTP GET
+            </t>
+            <t hangText="Access Token URL:">
+              https://photos.example.net/access_token, using HTTP POST
+            </t>
+            <t hangText="Photo (Protected Resource) URL:">
+              http://photos.example.net/photo with required parameter
+              <spanx style="verb">file</spanx> and optional parameter <spanx style="verb">size</spanx>
+            </t>
+          </list>
+        </t>
+        <t>
+          The Service Provider declares support for the <spanx style="verb">
+            HMAC-SHA1
+          </spanx> signature
+          method for all requests, and <spanx style="verb">PLAINTEXT</spanx> only for secure (HTTPS)
+          requests.
+        </t>
+        <t>
+          The Consumer printer.example.com already established a Consumer Key
+          and Consumer Secret with photos.example.net and advertizes its
+          printing services for photos stored on photos.example.net. The
+          Consumer registration is:
+
+          <list style="hanging">
+            <t hangText="Consumer Key:">
+              <spanx style="verb">
+                dpf43f3p2l4k3l03
+              </spanx>
+            </t>
+            <t hangText="Consumer Secret:">
+              <spanx style="verb">kd94hf93k423kf44</spanx>
+            </t>
+          </list>
+        </t>
+      </appendix>
+
+      <appendix title="Obtaining a Request Token">
+        <t>
+          After Jane informs printer.example.com that she would like to print
+          her vacation photo stored at photos.example.net, the printer website
+          tries to access the photo and receives HTTP 401 Unauthorized
+          indicating it is private. The Service Provider includes the following
+          header with the response:
+
+          <figure>
+            <artwork>
+              WWW-Authenticate: OAuth realm="http://photos.example.net/"
+            </artwork>
+          </figure>
+        </t>
+        <t>
+          The Consumer sends the following HTTP POST request to the Service
+          Provider:
+
+          <figure>
+            <artwork>
+              https://photos.example.net/request_token?oauth_consumer_key=dpf43f3p2l4k3l03&amp;oauth_signature_method=PLAINTEXT&amp;oauth_signature=kd94hf93k423kf44%26&amp;oauth_timestamp=1191242090&amp;oauth_nonce=hsu94j3884jdopsl&amp;oauth_version=1.0
+            </artwork>
+          </figure>
+        </t>
+        <t>
+          The Service Provider checks the signature and replies with an
+          unauthorized Request Token in the body of the HTTP response:
+
+          <figure>
+            <artwork>
+              oauth_token=hh5s93j4hdidpola&amp;oauth_token_secret=hdhd0244k9j7ao03
+            </artwork>
+          </figure>
+        </t>
+      </appendix>
+
+      <appendix title="Requesting User Authorization">
+        <t>
+          The Consumer redirects Jane's browser to the Service Provider
+          User Authorization URL to obtain Jane's approval for accessing
+          her private photos.
+
+          <figure>
+            <artwork>
+              http://photos.example.net/authorize?oauth_token=hh5s93j4hdidpola&amp;oauth_callback=http%3A%2F%2Fprinter.example.com%2Frequest_token_ready
+            </artwork>
+          </figure>
+        </t>
+        <t>
+          The Service Provider asks Jane to sign-in using her username and
+          password and, if successful, asks her if she approves granting
+          printer.example.com access to her private photos. If Jane approves
+          the request, the Service Provider redirects her back to the
+          Consumer's callback URL:
+
+          <figure>
+            <artwork>
+              http://printer.example.com/request_token_ready?oauth_token=hh5s93j4hdidpola
+            </artwork>
+          </figure>
+        </t>
+      </appendix>
+
+      <appendix title="Obtaining an Access Token">
+        <t>
+          Now that the Consumer knows Jane approved the Request Token, it
+          asks the Service Provider to exchange it for an Access Token:
+
+          <figure>
+            <artwork>
+              https://photos.example.net/access_token?oauth_consumer_key=dpf43f3p2l4k3l03&amp;oauth_token=hh5s93j4hdidpola&amp;oauth_signature_method=PLAINTEXT&amp;oauth_signature=kd94hf93k423kf44%26hdhd0244k9j7ao03&amp;oauth_timestamp=1191242092&amp;oauth_nonce=dji430splmx33448&amp;oauth_version=1.0
+            </artwork>
+          </figure>
+        </t>
+        <t>
+          The Service Provider checks the signature and replies with an
+          Access Token in the body of the HTTP response:
+
+          <figure>
+            <artwork>
+              oauth_token=nnch734d00sl2jdk&amp;oauth_token_secret=pfkkdhi9sl3r4s00
+            </artwork>
+          </figure>
+        </t>
+      </appendix>
+
+      <appendix title="Accessing Protected Resources">
+        <t>
+          The Consumer is now ready to request the private photo. Since the
+          photo URL is not secure (HTTP), it must use <spanx style="verb">HMAC-SHA1</spanx>.
+        </t>
+        <appendix title="Generating Signature Base String" anchor="sig_base_example">
+          <t>
+            To generate the signature, it first needs to generate the Signature
+            Base String. The request contains the following parameters
+            (<spanx style="verb">oauth_signature</spanx> excluded) which are ordered and concatenated into
+            a normalized string:
+
+            <list style="hanging">
+              <t hangText="oauth_consumer_key:">
+                <spanx style="verb">dpf43f3p2l4k3l03</spanx>
+              </t>
+              <t hangText="oauth_token:">
+                <spanx style="verb">nnch734d00sl2jdk</spanx>
+              </t>
+              <t hangText="oauth_signature_method:">
+                <spanx style="verb">HMAC-SHA1</spanx>
+              </t>
+              <t hangText="oauth_timestamp:">
+                <spanx style="verb">1191242096</spanx>
+              </t>
+              <t hangText="oauth_nonce:">
+                <spanx style="verb">kllo9940pd9333jh</spanx>
+              </t>
+              <t hangText="oauth_version:">
+                <spanx style="verb">1.0</spanx>
+              </t>
+              <t hangText="file:">
+                <spanx style="verb">vacation.jpg</spanx>
+              </t>
+              <t hangText="size:">
+                <spanx style="verb">original</spanx>
+              </t>
+            </list>
+          </t>
+          <t>
+            The following inputs are used to generate the Signature Base String:
+
+            <list style="numbers">
+              <t hangText="The HTTP request method:">
+                <spanx style="verb">GET</spanx>
+              </t>
+              <t hangText="The request URL:">
+                <spanx style="verb">http://photos.example.net/photos</spanx>
+              </t>
+              <t hangText="The encoded normalized request parameters string:">
+                <spanx style="verb">file=vacation.jpg&amp;oauth_consumer_key=dpf43f3p2l4k3l03&amp;oauth_nonce=kllo9940pd9333jh&amp;oauth_signature_method=HMAC-SHA1&amp;oauth_timestamp=1191242096&amp;oauth_token=nnch734d00sl2jdk&amp;oauth_version=1.0&amp;size=original</spanx>
+              </t>
+            </list>
+          </t>
+          <t>
+            The Signature Base String is:
+
+            <figure>
+              <artwork>
+                GET&amp;http%3A%2F%2Fphotos.example.net%2Fphotos&amp;file%3Dvacation.jpg%26oauth_consumer_key%3Ddpf43f3p2l4k3l03%26oauth_nonce%3Dkllo9940pd9333jh%26oauth_signature_method%3DHMAC-SHA1%26oauth_timestamp%3D1191242096%26oauth_token%3Dnnch734d00sl2jdk%26oauth_version%3D1.0%26size%3Doriginal
+              </artwork>
+            </figure>
+          </t>
+        </appendix>
+
+        <appendix title="Calculating Signature Value">
+          <t>
+            HMAC-SHA1 produces the following <spanx style="verb">digest</spanx> value as a base64-encoded
+            string (using the Signature Base String as <spanx style="verb">text</spanx> and
+            <spanx style="verb">
+              kd94hf93k423kf44&amp;pfkkdhi9sl3r4s00
+            </spanx> as <spanx style="verb">key</spanx>):
+
+            <figure>
+              <artwork>
+                tR3+Ty81lMeYAr/Fid0kMTYa/WM=
+              </artwork>
+            </figure>
+          </t>
+        </appendix>
+
+        <appendix title="Requesting Protected Resource">
+          <t>
+            All together, the Consumer request for the photo is:
+
+            <figure>
+              <artwork>
+                http://photos.example.net/photos?file=vacation.jpg&amp;size=original
+
+                Authorization: OAuth realm="http://photos.example.net/",
+                oauth_consumer_key="dpf43f3p2l4k3l03",
+                oauth_token="nnch734d00sl2jdk",
+                oauth_signature_method="HMAC-SHA1",
+                oauth_signature="tR3%2BTy81lMeYAr%2FFid0kMTYa%2FWM%3D",
+                oauth_timestamp="1191242096",
+                oauth_nonce="kllo9940pd9333jh",
+                oauth_version="1.0"
+              </artwork>
+            </figure>
+          </t>
+          <t>
+            And if using query parameters:
+
+            <figure>
+              <artwork>
+                http://photos.example.net/photos?file=vacation.jpg&amp;size=original&amp;oauth_consumer_key=dpf43f3p2l4k3l03&amp;oauth_token=nnch734d00sl2jdk&amp;oauth_signature_method=HMAC-SHA1&amp;oauth_signature=tR3%2BTy81lMeYAr%2FFid0kMTYa%2FWM%3D&amp;oauth_timestamp=1191242096&amp;oauth_nonce=kllo9940pd9333jh&amp;oauth_version=1.0
+              </artwork>
+            </figure>
+          </t>
+          <t>
+            photos.example.net checks the signature and responds with the
+            requested photo.
+          </t>
+        </appendix>
+
+      </appendix>
+
+    </appendix>
+
+    <appendix title="Security Considerations">
+
+      <appendix title="Credentials and Token Exchange">
+        <t>
+          The OAuth specification does not describe any mechanism for protecting
+          Tokens and secrets from eavesdroppers when they are transmitted from
+          the Service Provider to the Consumer in <xref target="request_grant" />
+          and  <xref target="access_grant" />. Service Providers should ensure
+          that these transmissions are protected using transport-layer mechanisms
+          such as TLS or SSL.
+        </t>
+      </appendix>
+
+      <appendix title="PLAINTEXT Signature Method">
+        <t>
+          When used with <spanx style="verb">PLAINTEXT</spanx> signatures, the
+          OAuth protocol makes no attempts to protect User credentials from
+          eavesdroppers or man-in-the-middle attacks.
+          The <spanx style="verb">PLAINTEXT</spanx> signature algorithm is only
+          intended to be used in conjunction with a transport-layer security
+          mechanism such as TLS or SSL which does provide such protection.
+          If transport-layer protection is unavailable, the
+          <spanx style="verb">PLAINTEXT</spanx> signature method should not be
+          used.
+        </t>
+      </appendix>
+
+      <appendix title="Confidentiality of Requests">
+        <t>
+          While OAuth provides a mechanism for verifying the integrity of
+          requests, it provides no guarantee of request confidentiality.
+          Unless further precautions are taken, eavesdroppers will have full
+          access to request content. Service Providers should carefully
+          consider the kinds of data likely to be sent as part of such requests,
+          and should employ transport-layer security mechanisms to protect
+          sensitive resources.
+        </t>
+      </appendix>
+
+      <appendix title="Spoofing by Counterfeit Servers">
+        <t>
+          OAuth makes no attempt to verify the authenticity of the Service
+          Provider. A hostile party could take advantage of this by intercepting
+          the Consumer's requests and returning misleading or otherwise incorrect
+          responses. Service providers should consider such attacks when
+          developing services based on OAuth, and should require transport-layer
+          security for any requests where the authenticity of the Service
+          Provider or of request responses is an issue.
+        </t>
+      </appendix>
+
+      <appendix title="Proxying and Caching of Authenticated Content">
+        <t>
+          The <xref target="auth_header">HTTP Authorization scheme</xref> is
+          optional. However, <xref target="RFC2616" /> relies on the
+          <spanx style="verb">Authorization</spanx> and
+          <spanx style="verb">WWW-Authenticate</spanx> headers to distinguish
+          authenticated content so that it can be protected. Proxies and
+          caches, in particular, may fail to adequately protect requests not
+          using these headers.
+        </t>
+        <t>
+          For example, private authenticated content may be stored in (and thus
+          retrievable from) publicly-accessible caches. Service Providers not
+          using the <xref target="auth_header">HTTP Authorization scheme</xref>
+          should take care to use other mechanisms, such as the
+          <spanx style="verb">Cache-Control</spanx> header, to ensure that
+          authenticated content is protected.
+        </t>
+      </appendix>
+
+      <appendix title="Plaintext Storage of Credentials">
+        <t>
+          The Consumer Secret and Token Secret function the same way passwords
+          do in traditional authentication systems. In order to compute the
+          signatures used in the non-<spanx style="verb">PLAINTEXT</spanx>
+          methods, the Service Provider must have access to these secrets in
+          plaintext form. This is in contrast, for example, to modern operating
+          systems, which store only a one-way hash of user credentials.
+        </t>
+        <t>
+          If an attacker were to gain access to these secrets - or worse, to
+          the Service Provider's database of all such secrets - he or she would
+          be able to perform any action on behalf of any User. Accordingly, it
+          is critical that Service Providers protect these secrets from
+          unauthorized access.
+        </t>
+      </appendix>
+
+      <appendix title="Secrecy of the Consumer Secret">
+        <t>
+          In many applications, the Consumer application will be under the
+          control of potentially untrusted parties. For example, if the
+          Consumer is a freely available desktop application, an attacker may
+          be able to download a copy for analysis. In such cases, attackers
+          will be able to recover the Consumer Secret used to authenticate the
+          Consumer to the Service Provider.
+        </t>
+        <t>
+          Accordingly, Service Providers should not use the Consumer Secret
+          alone to verify the identity of the Consumer. Where possible, other
+          factors such as IP address should be used as well.
+        </t>
+      </appendix>
+
+      <appendix title="Phishing Attacks">
+        <t>
+          Wide deployment of OAuth and similar protocols may cause
+          Users to become inured to the practice of being redirected to
+          websites where they are asked to enter their passwords. If Users are
+          not careful to verify the authenticity of these websites before
+          entering their credentials, it will be possible for attackers to
+          exploit this practice to steal Users' passwords.
+        </t>
+        <t>
+          Service Providers should attempt to educate Users about the risks
+          phishing attacks pose, and should provide mechanisms that make it
+          easy for Users to confirm the authenticity of their sites.
+        </t>
+      </appendix>
+
+      <appendix title="Scoping of Access Requests">
+        <t>
+          By itself, OAuth does not provide any method for scoping the access
+          rights granted to a Consumer. A Consumer either has access to
+          Protected Resources or it doesn't. Many applications will, however,
+          require greater granularity of access rights. For example, Service
+          Providers may wish to make it possible to grant access to some
+          Protected Resources but not others, or to grant only limited access
+          (such as read-only access) to those Protected Resources.
+        </t>
+        <t>
+          When implementing OAuth, Service Providers should consider the types
+          of access Users may wish to grant Consumers, and should provide
+          mechanisms to do so. Service Providers should also take care to
+          ensure that Users understand the access they are granting, as well as
+          any risks that may be involved.
+        </t>
+      </appendix>
+
+      <appendix title="Entropy of Secrets">
+        <t>
+          Unless a transport-layer security protocol is used, eavesdroppers will
+          have full access to OAuth requests and signatures, and will thus be
+          able to mount offline brute-force attacks to recover the Consumer's
+          credentials used. Service Providers should be careful to assign Token
+          Secrets and Consumer Secrets which are long enough - and random enough
+          - to resist such attacks for at least the length of time that the
+          secrets are valid.
+        </t>
+        <t>
+          For example, if Token Secrets are valid for two weeks, Service
+          Providers should ensure that it is not possible to mount a brute force
+          attack that recovers the Token Secret in less than two weeks. Of
+          course, Service Providers are urged to err on the side of caution,
+          and use the longest secrets reasonable.
+        </t>
+        <t>
+          It is equally important that the pseudo-random number generator (PRNG)
+          used to generate these secrets be of sufficiently high quality. Many
+          PRNG implementations generate number sequences that may appear to be
+          random, but which nevertheless exhibit patterns or other weaknesses
+          which make cryptanalysis or brute force attacks easier. Implementors
+          should be careful to use cryptographically secure PRNGs to avoid these
+          problems.
+        </t>
+      </appendix>
+
+      <appendix title="Denial of Service / Resource Exhaustion Attacks">
+        <t>
+          The OAuth protocol has a number of features which may make resource
+          exhaustion attacks against Service Providers possible. For example,
+          if a Service Provider includes a nontrivial amount of entropy in Token
+          Secrets as recommended above, then an attacker may be able to exhaust
+          the Service Provider's entropy pool very quickly by repeatedly
+          obtaining Request Tokens from the Service Provider.
+        </t>
+        <t>
+          Similarly, OAuth requires Service Providers to track used nonces. If
+          an attacker is able to use many nonces quickly, the resources required
+          to track them may exhaust available capacity. And again, OAuth can
+          require Service Providers to perform potentially expensive computations
+          in order to verify the signature on incoming requests. An attacker may
+          exploit this to perform a denial of service attack by sending a large
+          number of invalid requests to the Service Provider.
+        </t>
+        <t>
+          Resource Exhaustion attacks are by no means specific to OAuth. However,
+          OAuth implementors should be careful to consider the additional
+          avenues of attack that OAuth exposes, and design their implementations
+          accordingly. For example, entropy starvation typically results in
+          either a complete denial of service while the system waits for new
+          entropy or else in weak (easily guessable) secrets. When implementing
+          OAuth, Service Providers should consider which of these presents a
+          more serious risk for their application and design accordingly.
+        </t>
+      </appendix>
+
+      <appendix title="Cryptographic Attacks">
+        <t>
+          SHA-1, the hash algorithm used in <spanx style="verb">HMAC-SHA1</spanx>
+          signatures, has been <xref target="SHA1">shown</xref> to have a number
+          of cryptographic weaknesses that significantly reduce its resistance to
+          collision attacks. Practically speaking, these weaknesses are difficult
+          to exploit, and by themselves do not pose a significant risk to users
+          of OAuth. They may, however, make more efficient attacks possible, and
+          NIST has <xref target="NIST">announced</xref> that it will phase out
+          use of SHA-1 by 2010. Service Providers should take this into account
+          when considering whether SHA-1 provides an adequate level of security
+          for their applications.
+        </t>
+      </appendix>
+
+      <appendix title="Signature Base String Compatibility">
+        <t>
+          The Signature Base String has been designed to support the signature
+          methods defined in this specification. When designing additional
+          signature methods, the Signature Base String should be evaluated to
+          ensure compatibility with the algorithms used.
+        </t>
+        <t>
+          The Signature Base String cannot guarantee the order in which parameters
+          are sent. If parameter ordering is important and affects the result of a
+          request, the Signature Base String will not protect against request
+          manipulation.
+        </t>
+      </appendix>
+
+    </appendix>
+
+  </middle>
+
+  <back>
+
+    <references title="References">
+
+      <reference anchor="RFC2104">
+        <front>
+          <title>HMAC: Keyed-Hashing for Message Authentication</title>
+          <author initials="H.K" surname="Krawczyk" fullname="Hugo Krawczyk">
+            <organization>IBM</organization>
+          </author>
+          <author initials="M.B" surname="Bellare" fullname="Mihir Bellare">
+            <organization>UCSD</organization>
+          </author>
+          <author initials="R.C" surname="Canetti" fullname="Ran Canetti">
+            <organization>IBM</organization>
+          </author>
+        </front>
+        <seriesInfo name="RFC" value="2104" />
+      </reference>
+
+      <reference anchor="RFC2606">
+        <front>
+          <title>Reserved Top Level DNS Names</title>
+          <author initials="D.E" surname="Eastlake" fullname="D. Eastlake">
+            <organization></organization>
+          </author>
+          <author initials="A.P" surname="Panitz" fullname="A. Panitz">
+            <organization></organization>
+          </author>
+        </front>
+        <seriesInfo name="RFC" value="2606" />
+      </reference>
+
+      <reference anchor="RFC2119">
+        <front>
+          <title>
+            Key words for use in RFCs to Indicate Requirement Levels
+          </title>
+          <author initials="B.S" surname="Bradner" fullname="Scott Bradner">
+            <organization>Alis Technologies</organization>
+          </author>
+        </front>
+        <seriesInfo name="RFC" value="2119" />
+      </reference>
+
+      <reference anchor="RFC2616">
+        <front>
+          <title>Hypertext Transfer Protocol -- HTTP/1.1</title>
+          <author initials="R.F" surname="Fielding" fullname="R. Fielding">
+            <organization>UC Irvine</organization>
+          </author>
+          <author initials="J.G" surname="Gettys" fullname="J. Gettys">
+            <organization>Compaq/W3C</organization>
+          </author>
+          <author initials="J.M" surname="Mogul" fullname="J. Mogul">
+            <organization>Compaq</organization>
+          </author>
+          <author initials="H.F" surname="Frystyk" fullname="H. Frystyk">
+            <organization>W3C/MIT</organization>
+          </author>
+          <author initials="L.M" surname="Masinter" fullname="L. Masinter">
+            <organization>Xerox</organization>
+          </author>
+          <author initials="P.L" surname="Leach" fullname="P. Leach">
+            <organization>Microsoft</organization>
+          </author>
+          <author initials="T.L" surname="Berners-Lee" fullname="T. Berners-Lee">
+            <organization>W3C/MIT</organization>
+          </author>
+        </front>
+        <seriesInfo name="RFC" value="2616" />
+      </reference>
+
+      <reference anchor="RFC2617">
+        <front>
+          <title>
+            HTTP Authentication: Basic and Digest Access Authentication
+          </title>
+          <author initials="J.F" surname="Franks" fullname="J. Franks">
+            <organization />
+          </author>
+          <author initials="P.HB" surname="Hallam-Baker" fullname="P. Hallam-Baker">
+            <organization />
+          </author>
+          <author initials="J.H" surname="Hostetler" fullname="J. Hostetler">
+            <organization />
+          </author>
+          <author initials="S.L" surname="Lawrence" fullname="S. Lawrence">
+            <organization />
+          </author>
+          <author initials="P.L" surname="Leach" fullname="P. Leach">
+            <organization />
+          </author>
+          <author initials="A.L" surname="Luotonen" fullname="A. Luotonen">
+            <organization />
+          </author>
+          <author initials="L.S" surname="Stewart" fullname="L. Stewart">
+            <organization />
+          </author>
+        </front>
+        <seriesInfo name="RFC" value="2617" />
+      </reference>
+
+      <reference anchor="RFC3447">
+        <front>
+          <title>
+            Public-Key Cryptography Standards (PKCS) #1: RSA Cryptography; Specifications Version 2.1
+          </title>
+          <author initials="J.J" surname="Jonsson" fullname="J. Jonsson">
+            <organization></organization>
+          </author>
+          <author initials="B.K" surname="Kaliski" fullname="B. Kaliski">
+            <organization></organization>
+          </author>
+        </front>
+        <seriesInfo name="RFC" value="3447" />
+      </reference>
+
+      <reference anchor="RFC3629">
+        <front>
+          <title>
+            UTF-8, a transformation format of Unicode and ISO 10646
+          </title>
+          <author initials="F.Y" surname="Yergeau" fullname="Francois Yergeau">
+            <organization />
+          </author>
+        </front>
+        <seriesInfo name="RFC" value="3629" />
+      </reference>
+
+      <reference anchor="RFC3986">
+        <front>
+          <title>Uniform Resource Identifiers (URI): Generic Syntax</title>
+          <author initials="T.L" surname="Berners-Lee" fullname="T. Berners-Lee">
+            <organization />
+          </author>
+        </front>
+        <seriesInfo name="RFC" value="3986" />
+      </reference>
+
+      <reference anchor="RFC2045">
+        <front>
+          <title>Multipurpose Internet Mail Extensions (MIME) Part One: Format of Internet Message Bodies</title>
+          <author initials="N.F" surname="Freed" fullname="N. Freed">
+            <organization>Innosoft</organization>
+          </author>
+          <author initials="N.B" surname="Borenstein" fullname="N. Borenstein">
+            <organization>First Virtual</organization>
+          </author>
+        </front>
+        <seriesInfo name="RFC" value="2045" />
+      </reference>
+
+      <reference anchor="SHA1">
+        <front>
+          <title>Finding SHA-1 Characteristics: General Results and Applications</title>
+          <author initials="C.DC" surname="De Canniere" fullname="Christophe De Canniere">
+            <organization />
+          </author>
+          <author initials="C.R" surname="Rechberger" fullname="Christian Rechberger">
+            <organization />
+          </author>
+        </front>
+        <format type="HTML" target="http://dx.doi.org/10.1007/11935230_1" />
+      </reference>
+
+      <reference anchor="NIST">
+        <front>
+          <title>NIST Brief Comments on Recent Cryptanalytic Attacks on Secure Hashing Functions and the Continued Security Provided by SHA-1</title>
+          <author initials="NIST" surname="National Institute of Standards and Technolog" fullname="National Institute of Standards and Technolog">
+            <organization />
+          </author>
+        </front>
+        <format type="PDF" target="http://csrc.nist.gov/hash_standards_comments.pdf" />
+      </reference>
+
+    </references>
+  </back>
+
+</rfc>
+

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss xmlns:atom="http://www.w3.org/2005/Atom" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+  <channel>
+    <title>FanRadio</title>
+    <description>FanRadio updates</description>
+    <link>http:/www.rollingcode.org/appcast/fanradio</link>
+    <language>en</language>
+    <pubDate>Wed, 06 Oct 2010 11:16:54 +0900</pubDate>
+    <atom:link type="application/rss+xml" rel="self" href="http:/www.rollingcode.org/appcast/fanradio/update.xml"/>
+    <item>
+      <title>FanRadio 1.1.0</title>
+      <sparkle:releaseNotesLink>http:/www.rollingcode.org/appcast/fanradio/release_notes.html</sparkle:releaseNotesLink>
+      <pubDate>Wed, 06 Oct 2010 11:16:54 +0900</pubDate>
+      <guid isPermaLink="false">FanRadio-1.1.0</guid>
+      <enclosure type="application/dmg" length="1503945" sparkle:version="1.1.0" url="http:/www.rollingcode.org/appcast/fanradio/FanRadio-1.1.0.dmg" sparkle:shortVersionString="11" sparkle:dsaSignature="MC0CFQCLACk1gzbixRHX4TVwtK8p450jIAIUY1kItHft9DYSYAPy41A2ONYZ3Cw=
+"/>
+    </item>
+  </channel>
+</rss>
